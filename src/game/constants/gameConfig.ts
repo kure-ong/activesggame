@@ -1,0 +1,8 @@
+export const CANVAS_WIDTH = 1080;
+export const CANVAS_HEIGHT = 1920;
+export const LANES_X = [270, 540, 810];
+export const MAX_QUESTIONS = 5;
+export const PRESS_TARGET = 1;
+export const GO_TIMER_DURATION = 3;
+export const GAME_DURATION = 60;
+// export const GAME_DURATION = 1;

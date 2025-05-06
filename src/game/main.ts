@@ -4,6 +4,11 @@ import { Game as MainGame } from './scenes/Game';
 import { MainMenu } from './scenes/MainMenu';
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
+import StartMenuScene from './scenes/StartMenuScene';
+import AvatarSelectionScene from './scenes/AvatarSelectionScene';
+import GameScene from './scenes/GameScene';
+import GameFinishScene from './scenes/GameFinishScene';
+import GameAnalysisScene from './scenes/GameAnalysisScene';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -14,11 +19,17 @@ const config: Phaser.Types.Core.GameConfig = {
     parent: 'game-container',
     backgroundColor: '#672945',
     scene: [
-        Boot,
-        Preloader,
-        MainMenu,
-        MainGame,
-        GameOver
+        // Boot,
+        // Preloader,
+        // MainMenu,
+        // MainGame,
+        // GameOver
+        //
+        // StartMenuScene,
+        // AvatarSelectionScene,
+        GameScene,
+        // GameFinishScene,
+        // GameAnalysisScene,
     ],
     physics: {
         default: 'arcade',
