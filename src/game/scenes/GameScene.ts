@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
   private avatar!: Phaser.GameObjects.Sprite;
   private questions: Question[] = [];
   private currentQuestionIndex = 0;
+  private currentQuestion!: Question;
   private goTimerText!: Phaser.GameObjects.Text;
   private gameTimerText!: Phaser.GameObjects.Text;
   private gameCountdownValue = GAME_DURATION;
@@ -73,83 +74,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.startGameCountdown();
     this.startGoTimer();
-  }
-
-  startGameCountdown() {
-    this.gameCountdownInterval = this.time.addEvent({
-      delay: 1000,
-      loop: true,
-      callback: () => {
-        this.gameCountdownValue--;
-        this.gameTimerText.setText(formatTime(this.gameCountdownValue));
-        if (this.gameCountdownValue <= 0) this.endGame();
-      },
-    });
-  }
-
-  startGoTimer() {
-    this.questionBox?.destroy();
-
-    const question = this.questions[this.currentQuestionIndex];
-    this.goCountdown = GO_TIMER_DURATION;
-    this.goTimerText = this.add
-      .text(540, 300, this.goCountdown.toString(), {
-        fontSize: '72px',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
-
-    this.time.addEvent({
-      delay: 1000,
-      loop: true,
-      callback: () => {
-        this.goCountdown--;
-        if (this.goCountdown > 0) {
-          this.goTimerText.setText(this.goCountdown.toString());
-        } else if (this.goCountdown === 0) {
-          this.goTimerText.setText('Go!');
-        } else {
-          this.goTimerText.destroy();
-          this.displayQuestion(question);
-        }
-      },
-    });
-  }
-
-  displayQuestion(question: Question) {
-    this.buttonPressCount = 0;
-    this.questionBox?.destroy();
-
-    const topicText = this.add
-      .text(540, 150, question.topic, {
-        fontSize: '36px',
-        color: '#fff',
-      })
-      .setOrigin(0.5);
-
-    const questionText = this.add
-      .text(540, 250, question.question, {
-        fontSize: '32px',
-        color: '#fff',
-        wordWrap: { width: 800 },
-      })
-      .setOrigin(0.5);
-
-    this.answerTexts = question.answers.map((answer, i) =>
-      this.add
-        .text(LANES_X[i], 400, answer, {
-          fontSize: '28px',
-          color: '#fff',
-          backgroundColor: i === this.selectedLane ? '#4444ff' : undefined,
-        })
-        .setOrigin(0.5)
-    );
-
-    this.questionBox = this.add.container(0, 0, [
-      topicText,
-      questionText,
-      ...this.answerTexts,
-    ]);
   }
 
   update() {
@@ -205,15 +129,98 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  registerAnswer() {
-    const current = this.questions[this.currentQuestionIndex];
-    const isCorrect = this.selectedLane === current.correctIndex;
-    this.showModal(isCorrect);
+  private startGameCountdown() {
+    this.gameCountdownInterval = this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: () => {
+        this.gameCountdownValue--;
+        this.gameTimerText.setText(formatTime(this.gameCountdownValue));
+        if (this.gameCountdownValue <= 0) this.endGame();
+      },
+    });
   }
 
-  showModal(isCorrect: boolean) {
-    const question = this.questions[this.currentQuestionIndex];
-    this.inputLocked = true; 
+  private startGoTimer() {
+    this.questionBox?.destroy();
+    this.currentQuestion = this.questions[this.currentQuestionIndex];
+    this.goCountdown = GO_TIMER_DURATION;
+
+    this.goTimerText = this.add
+      .text(540, 300, this.goCountdown.toString(), {
+        fontSize: '72px',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5);
+
+    this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: () => {
+        this.goCountdown--;
+        if (this.goCountdown > 0) {
+          this.goTimerText.setText(this.goCountdown.toString());
+        } else if (this.goCountdown === 0) {
+          this.goTimerText.setText('Go!');
+        } else {
+          this.goTimerText.destroy();
+          this.displayQuestion(this.currentQuestion);
+        }
+      },
+    });
+  }
+
+  private displayQuestion(question: Question) {
+    this.buttonPressCount = 0;
+    this.questionBox?.destroy();
+
+    const topicText = this.add
+      .text(540, 150, question.topic, {
+        fontSize: '36px',
+        color: '#fff',
+        ...globalTextStyle
+      })
+      .setOrigin(0.5);
+
+    const questionText = this.add
+      .text(540, 250, question.question, {
+        fontSize: '32px',
+        color: '#fff',
+        wordWrap: { width: 800 },
+        ...globalTextStyle
+      })
+      .setOrigin(0.5);
+
+    this.answerTexts = question.answers.map((answer, i) =>
+      this.add
+        .text(LANES_X[i], 400, answer, {
+          fontSize: '28px',
+          color: '#fff',
+          backgroundColor: i === this.selectedLane ? '#4444ff' : undefined,
+        })
+        .setOrigin(0.5)
+    );
+
+    this.questionBox = this.add.container(0, 0, [
+      topicText,
+      questionText,
+      ...this.answerTexts,
+    ]);
+  }
+
+  private registerAnswer() {
+    const isCorrect = this.selectedLane === this.currentQuestion.correctIndex;
+
+    if (isCorrect) {
+      this.currentQuestionIndex++;
+      this.goToNextQuestion();
+    } else {
+      this.showModal(false);
+    }
+  }
+
+  private showModal(isCorrect: boolean) {
+    this.inputLocked = true;
     this.gameCountdownInterval.paused = true;
 
     const bg = this.add.image(540, 960, Assets.UI.Modal);
@@ -225,7 +232,7 @@ export default class GameScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.modal = this.add.container(0, 0, [bg, text])
-      .setAlpha(0) // start fully transparent
+      .setAlpha(0)
       .setDepth(2);
 
     this.tweens.add({
@@ -242,28 +249,30 @@ export default class GameScene extends Phaser.Scene {
         duration: 300,
         ease: 'Power2',
         onComplete: () => {
-          if (this.modal && this.modal.active) {
-            this.modal.destroy();
-            this.inputLocked = false;
-            this.gameCountdownInterval.paused = false;
-            this.currentQuestionIndex++;
-    
-            if (
-              this.currentQuestionIndex < MAX_QUESTIONS &&
-              this.gameCountdownValue > 0
-            ) {
-              // this.startGoTimer();
-              this.displayQuestion(question);
-            } else {
-              this.endGame();
-            }
-          }
+          this.modal.destroy();
+          this.inputLocked = false;
+          this.gameCountdownInterval.paused = false;
+          this.currentQuestionIndex++;
+          this.goToNextQuestion();
         },
       });
     });
   }
 
-  endGame() {
+  private goToNextQuestion() {
+    if (this.currentQuestionIndex < this.questions.length && this.gameCountdownValue > 0) {
+      if (this.currentQuestionIndex === 0) {
+        this.startGoTimer();
+      } else {
+        this.currentQuestion = this.questions[this.currentQuestionIndex];
+        this.displayQuestion(this.currentQuestion);
+      }
+    } else {
+      this.endGame();
+    }
+  }
+
+  private endGame() {
     // this.scene.start('GameFinishScene',{ avatar: this.avatar });
   }
 }

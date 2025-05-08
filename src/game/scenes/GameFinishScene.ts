@@ -106,8 +106,8 @@ export default class GameFinishScene extends Phaser.Scene {
       });
     }
 
-    // this.time.delayedCall(4000, () => {
-    //   this.scene.start('GameAnalysisScene');
-    // });
+    this.time.delayedCall(4000, () => {
+      this.scene.start('GameAnalysisScene');
+    });
   }
 }

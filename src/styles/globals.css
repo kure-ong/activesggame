@@ -1,3 +1,88 @@
+@font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Thin Italic.ttf') format('truetype');
+    font-weight: 100;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Light Italic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Medium Italic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded DemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded DemiBold Italic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded Bold Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Houschka Rounded';
+    src: url('/assets/fonts/Houschka Rounded ExtraBold Italic.ttf') format('truetype');
+    font-weight: 800;
+    font-style: italic;
+  }
+  
+
 body {
     margin: 0;
     padding: 0;
