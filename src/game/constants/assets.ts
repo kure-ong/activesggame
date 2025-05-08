@@ -25,6 +25,7 @@ export const Assets = {
   UI: {
     GameTitle: 'gameTitle',
     Modal: 'modalBackground',
+    QuestionBox: 'questionBoxBackground',
     Track: 'racetrack',
     Header: 'chooseAvatarHeader',
     Analysis1: 'game-analysis1.png',

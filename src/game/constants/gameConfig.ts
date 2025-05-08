@@ -7,3 +7,4 @@ export const PRESS_TARGET = 1;
 export const GO_TIMER_DURATION = 1;
 export const GAME_DURATION = 60;
 // export const GAME_DURATION = 1;
+export const MODAL_DURATION = 400; //100 = 1 sec

@@ -10,7 +10,9 @@ import {
   PRESS_TARGET,
   GAME_DURATION,
   GO_TIMER_DURATION,
+  MODAL_DURATION,
 } from '../constants/gameConfig';
+import { globalTextStyle } from '../constants/textStyle';
 
 interface GameSceneData {
   avatar: string;
@@ -47,6 +49,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(Assets.UI.Track, 'assets/racetrack.png');
     this.load.image(Assets.Avatars.RunBoy, 'assets/run-boy.png');
     this.load.image(Assets.Avatars.RunGirl, 'assets/run-girl.png');
+    this.load.image(Assets.UI.QuestionBox, 'assets/questionbox-background.png');
     this.load.image(Assets.UI.Modal, 'assets/modal-background.png');
   }
 
@@ -68,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameTimerText = this.add
       .text(540, 50, formatTime(this.gameCountdownValue), {
         fontSize: '48px',
-        color: '#fff',
+        ...globalTextStyle
       })
       .setOrigin(0.5);
 
@@ -85,47 +88,46 @@ export default class GameScene extends Phaser.Scene {
     
         // Left
         if (this.padHandler.isButtonJustPressed(pad, 14) && this.selectedLane > 0) {
-          this.selectedLane--;
-          this.avatar.setX(LANES_X[this.selectedLane]);
-          updateAnswerHighlights(this.answerTexts, this.selectedLane);
+          this.moveLane(-1);
         }
     
         // Right
         if (this.padHandler.isButtonJustPressed(pad, 15) && this.selectedLane < 2) {
-          this.selectedLane++;
-          this.avatar.setX(LANES_X[this.selectedLane]);
-          updateAnswerHighlights(this.answerTexts, this.selectedLane);
+          this.moveLane(1);
         }
     
         // Confirm
         if (pad.buttons.some(btn => btn.pressed)) {
-          this.buttonPressCount++;
-          if (this.buttonPressCount >= PRESS_TARGET) {
-            this.registerAnswer();
-          }
+          this.runToAnswer();
         }
     
       } else {
         // Keyboard mode
         if (Phaser.Input.Keyboard.JustDown(this.cursors.left!) && this.selectedLane > 0) {
-          this.selectedLane--;
-          this.avatar.setX(LANES_X[this.selectedLane]);
-          updateAnswerHighlights(this.answerTexts, this.selectedLane);
+          this.moveLane(-1);
         }
     
         if (Phaser.Input.Keyboard.JustDown(this.cursors.right!) && this.selectedLane < 2) {
-          this.selectedLane++;
-          this.avatar.setX(LANES_X[this.selectedLane]);
-          updateAnswerHighlights(this.answerTexts, this.selectedLane);
+          this.moveLane(1);
         }
     
         if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
-          this.buttonPressCount++;
-          if (this.buttonPressCount >= PRESS_TARGET) {
-            this.registerAnswer();
-          }
+          this.runToAnswer();
         }
       }
+    }
+  }
+
+  private moveLane(direction: -1 | 1) {
+    this.selectedLane += direction;
+    this.avatar.setX(LANES_X[this.selectedLane]);
+    updateAnswerHighlights(this.answerTexts, this.selectedLane);
+  }
+
+  private runToAnswer() {
+    this.buttonPressCount++;
+    if (this.buttonPressCount >= PRESS_TARGET) {
+      this.registerAnswer();
     }
   }
 
@@ -149,7 +151,7 @@ export default class GameScene extends Phaser.Scene {
     this.goTimerText = this.add
       .text(540, 300, this.goCountdown.toString(), {
         fontSize: '72px',
-        color: '#ffffff',
+        ...globalTextStyle
       })
       .setOrigin(0.5);
 
@@ -176,24 +178,23 @@ export default class GameScene extends Phaser.Scene {
 
     const topicText = this.add
       .text(540, 150, question.topic, {
+        ...globalTextStyle,
         fontSize: '36px',
-        color: '#fff',
-        ...globalTextStyle
       })
       .setOrigin(0.5);
 
     const questionText = this.add
       .text(540, 250, question.question, {
+        ...globalTextStyle,
         fontSize: '32px',
-        color: '#fff',
         wordWrap: { width: 800 },
-        ...globalTextStyle
       })
       .setOrigin(0.5);
 
     this.answerTexts = question.answers.map((answer, i) =>
       this.add
         .text(LANES_X[i], 400, answer, {
+          ...globalTextStyle,
           fontSize: '28px',
           color: '#fff',
           backgroundColor: i === this.selectedLane ? '#4444ff' : undefined,
@@ -223,17 +224,22 @@ export default class GameScene extends Phaser.Scene {
     this.inputLocked = true;
     this.gameCountdownInterval.paused = true;
 
-    const bg = this.add.image(540, 960, Assets.UI.Modal);
+    const bg = this.add.image(0,0, Assets.UI.Modal).setOrigin(0.5);
     const text = this.add
-      .text(540, 960, isCorrect ? 'Correct!' : 'Wrong!', {
-        fontSize: '64px',
-        color: '#fff',
+      .text(-bg.width / 2 + 40, 40, isCorrect ? 'Correct!' : this.currentQuestion.didYouKnow, {
+        ...globalTextStyle,
+        fontSize: '32px',
+        color: '#000',
+        align: 'left',
+        wordWrap: { width: bg.width - 300, useAdvancedWrap: true },
       })
-      .setOrigin(0.5);
+      .setOrigin(0, 0.5);
 
-    this.modal = this.add.container(0, 0, [bg, text])
+    this.modal = this.add.container(540, 960, [bg, text])
       .setAlpha(0)
       .setDepth(2);
+
+    this.modal.setSize(bg.width,bg.height);
 
     this.tweens.add({
       targets: this.modal,
@@ -246,7 +252,7 @@ export default class GameScene extends Phaser.Scene {
       this.tweens.add({
         targets: this.modal,
         alpha: 0,
-        duration: 300,
+        duration: MODAL_DURATION,
         ease: 'Power2',
         onComplete: () => {
           this.modal.destroy();

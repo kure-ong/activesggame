@@ -9,6 +9,7 @@ import AvatarSelectionScene from './scenes/AvatarSelectionScene';
 import GameScene from './scenes/GameScene';
 import GameFinishScene from './scenes/GameFinishScene';
 import GameAnalysisScene from './scenes/GameAnalysisScene';
+import { loadFont } from './utils/loadFont';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -36,10 +37,9 @@ const config: Phaser.Types.Core.GameConfig = {
     },
 };
 
-const StartGame = (parent: string) => {
-
+const StartGame = async (parent: string): Promise<Phaser.Game> => {
+    await loadFont('Houschka Rounded', '/assets/fonts/Houschka Rounded Medium.ttf'); // adjust path if needed
     return new Game({ ...config, parent });
-
-}
+  };
 
 export default StartGame;
