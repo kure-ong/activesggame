@@ -49,7 +49,7 @@ export default class AvatarSelectionScene extends Phaser.Scene {
 
     start.on('pointerdown', () => {
       if (this.selectedAvatar) {
-        this.scene.start('GameScene', { avatar: this.selectedAvatar });
+        this.scene.start('GameScene', { avatarKey: this.selectedAvatar });
         // this.scene.start('GameFinishScene');
       }
     });

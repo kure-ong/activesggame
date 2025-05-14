@@ -26,11 +26,11 @@ const config: Phaser.Types.Core.GameConfig = {
         // MainGame,
         // GameOver
         //
-        // StartMenuScene,
-        // AvatarSelectionScene,
+        StartMenuScene,
+        AvatarSelectionScene,
         GameScene,
-        // GameFinishScene,
-        // GameAnalysisScene,
+        GameFinishScene,
+        GameAnalysisScene,
     ],
     physics: {
         default: 'arcade',

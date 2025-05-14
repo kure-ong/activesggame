@@ -2,7 +2,14 @@ import Phaser from 'phaser';
 import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/gameConfig';
 
+interface GameSceneData {
+  score: number;
+}
+
 export default class GameAnalysisScene extends Phaser.Scene {
+  private poppers: Phaser.GameObjects.Sprite[] = [];
+  
+  
   constructor() {
     super('GameAnalysisScene');
   }
@@ -19,7 +26,9 @@ export default class GameAnalysisScene extends Phaser.Scene {
     });
   }
 
-  create() {
+  create(data: GameSceneData) {
+    let analysisImageKey: string;
+
     // this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Play);
     this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Game);
 
@@ -27,14 +36,26 @@ export default class GameAnalysisScene extends Phaser.Scene {
     //   fontSize: '36px',
     //   color: '#ffffff',
     // }).setOrigin(0.5);
-
-    this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, Assets.UI.Analysis1).setDepth(2);
+    if (data.score >= 55) {
+      analysisImageKey = Assets.UI.Analysis1;
+    } else if (data.score >= 31) {
+      analysisImageKey = Assets.UI.Analysis2;
+    } else {
+      analysisImageKey = Assets.UI.Analysis3;
+    }
+    this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, analysisImageKey).setDepth(2);
 
     const doneButton = this.add.image(CANVAS_WIDTH / 2, 1650, Assets.Buttons.Done).setInteractive();
     doneButton.on('pointerdown', () => {
+      this.poppers.forEach((popper) => {
+        this.tweens.killTweensOf(popper);
+        // popper.stop();
+        popper.destroy();
+        this.anims.remove('popper');
+      });
       this.scene.start('StartMenuScene');
     });
-
+    
     this.anims.create({
       key: 'popper',
       frames: this.anims.generateFrameNumbers(Assets.Animations.Confetti, {
@@ -48,6 +69,7 @@ export default class GameAnalysisScene extends Phaser.Scene {
     for (let i = 0; i < 3; i++) {
       const popper = this.add.sprite(300 + i * 200, 0, Assets.Animations.Confetti).setDepth(1);
       popper.play('popper');
+      this.poppers.push(popper); // store poppers
       this.tweens.add({
         targets: popper,
         y: 960,

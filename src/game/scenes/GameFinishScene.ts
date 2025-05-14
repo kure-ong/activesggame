@@ -3,11 +3,13 @@ import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/gameConfig';
 
 interface GameSceneData {
-  avatar: string;
+  avatarKey: string;
+  score: number;
 }
 
 export default class GameFinishScene extends Phaser.Scene {
-  private avatar!: Phaser.GameObjects.Image;
+  private avatarAnim!: Phaser.GameObjects.Image;
+  private poppers: Phaser.GameObjects.Sprite[] = [];
 
   constructor() {
     super('GameFinishScene');
@@ -30,12 +32,14 @@ export default class GameFinishScene extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
+    console.log('Avatar:', data.avatarKey);
+    console.log('Score:', data.score);
     const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky);
     const Racetrack = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Racetrack);
     skyBg.setOrigin(skyBg.originX, 0);
     Racetrack.setOrigin(Racetrack.originX, 0);
     
-    // const avatar = this.add.sprite(CANVAS_WIDTH / 2, 1200, Assets.Avatars.CelebrateBoy);
+    // const avatarAnim = this.add.sprite(CANVAS_WIDTH / 2, 1200, Assets.Avatars.CelebrateBoy);
     // this.anims.create({
     //   key: 'celebrate',
     //   frames: this.anims.generateFrameNumbers(Assets.Avatars.CelebrateBoy, {
@@ -54,7 +58,7 @@ export default class GameFinishScene extends Phaser.Scene {
     const controlY = CANVAS_HEIGHT * 1.2; // Higher Y = lower visually on screen
 
     const avatarKey =
-      data.avatar === 'boy' ? Assets.Avatars.CelebrateBoy : Assets.Avatars.CelebrateGirl;
+      data.avatarKey === 'boy' ? Assets.Avatars.CelebrateBoy : Assets.Avatars.CelebrateGirl;
     const avatar = this.add.image(startX, startY, avatarKey);
     avatar.setScale(4);
 
@@ -96,6 +100,8 @@ export default class GameFinishScene extends Phaser.Scene {
     for (let i = 0; i < 5; i++) {
       const popper = this.add.sprite(200 + i * 200, 0, Assets.Animations.Confetti);
       popper.play('popper');
+      this.poppers.push(popper); // store poppers
+
       this.tweens.add({
         targets: popper,
         y: 960,
@@ -107,7 +113,16 @@ export default class GameFinishScene extends Phaser.Scene {
     }
 
     this.time.delayedCall(4000, () => {
-      this.scene.start('GameAnalysisScene');
+      this.poppers.forEach((popper) => {
+        this.tweens.killTweensOf(popper);
+        // popper.stop();
+        popper.destroy();
+        this.anims.remove('popper');
+      });
+
+      this.scene.start('GameAnalysisScene', {
+        score: data.score
+      });
     });
   }
 }
