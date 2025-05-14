@@ -52,8 +52,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(Assets.Backgrounds.Play, 'assets/play-background.png');
+    // this.load.image(Assets.Backgrounds.Play, 'assets/play-background.png');
     this.load.image(Assets.UI.Track, 'assets/racetrack.png');
+    this.load.image(Assets.UI.LaneOptions, 'assets/lane-options.png')
     this.load.image(Assets.Avatars.RunBoy, 'assets/run-boy.png');
     this.load.image(Assets.Avatars.RunGirl, 'assets/run-girl.png');
     this.load.image(Assets.UI.QuestionBox, 'assets/questionbox-background.png');
@@ -64,8 +65,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
-    this.add.image(540, 960, Assets.Backgrounds.Play);
-    this.add.image(540, 1400, Assets.UI.Track);
+    // this.add.image(540, 960, Assets.Backgrounds.Play);
+    const trackImg = this.add.image(540, 780, Assets.UI.Track).setOrigin(0.5, 0);
+    trackImg.setDisplaySize(1080, trackImg.height * (1080 / trackImg.width));
+
+    const laneOptions = this.add.image(540, 880, Assets.UI.LaneOptions);
+    laneOptions.setDisplaySize(640, laneOptions.height * (640 / laneOptions.width));
 
     if (!USE_GAMEPAD) {
       this.cursors = this.input.keyboard!.createCursorKeys();
@@ -74,7 +79,7 @@ export default class GameScene extends Phaser.Scene {
     
     const avatarKey =
       data.avatar === 'boy' ? Assets.Avatars.RunBoy : Assets.Avatars.RunGirl;
-    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1200, avatarKey);
+    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1500, avatarKey);
 
     this.questions = getRandomQuestions();
 
@@ -129,9 +134,26 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private moveLane(direction: -1 | 1) {
-    this.selectedLane += direction;
-    this.avatar.setX(LANES_X[this.selectedLane]);
-    updateAnswerHighlights(this.answerTexts, this.selectedLane);
+    // this.selectedLane += direction;
+    // this.avatar.setX(LANES_X[this.selectedLane]);
+    // updateAnswerHighlights(this.answerTexts, this.selectedLane);
+    const newLane = this.selectedLane + direction;
+
+    // Guard against invalid lane index
+    // if (newLane < 0 || newLane >= LANES_X.length) return;
+
+    this.selectedLane = newLane;
+
+    this.tweens.add({
+      targets: this.avatar,
+      x: LANES_X[this.selectedLane],
+      duration: 200, // ms for the slide animation
+      ease: 'Power2', // smooth easing
+      onUpdate: () => {
+        // Optional: update highlights during movement (not just after)
+        updateAnswerHighlights(this.answerTexts, this.selectedLane);
+      }
+    });
   }
 
   private runToAnswer() {
@@ -229,7 +251,7 @@ export default class GameScene extends Phaser.Scene {
     // 💡 Set up countdown animation via tween (right to left)
     this.tweens.addCounter({
       from: fullWidth,
-      to: 0,
+      to: 40,
       duration: duration,
       ease: 'Linear',
       onUpdate: (tween) => {
@@ -238,6 +260,10 @@ export default class GameScene extends Phaser.Scene {
         // Shrink from right to left
         inner.setCrop(cropX, 0, fullWidth, inner.height);
         inner.setX(-cropX-9);
+        
+        // const elapsed = tween.progress * duration;
+        // const remaining = Math.ceil((duration - elapsed) / 1000);
+        // console.log('⏱ Remaining seconds:', remaining);
       },
       onComplete: () => {
         console.log('Tween complete');

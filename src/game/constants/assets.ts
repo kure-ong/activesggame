@@ -27,6 +27,7 @@ export const Assets = {
     Modal: 'modalBackground',
     QuestionBox: 'questionBoxBackground',
     Track: 'racetrack',
+    LaneOptions: 'laneOptions',
     Header: 'chooseAvatarHeader',
     TimerBar: 'timerBar',
     TimerBarInner: 'timerBarInner',
