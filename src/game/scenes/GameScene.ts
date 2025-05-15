@@ -79,6 +79,7 @@ export default class GameScene extends Phaser.Scene {
     this.laneReachedTarget = false;
     this.isLaneAnimating = false;
     this.inputLocked = true;
+    this.score = 0;
   }
 
   create(data: GameSceneData) {
