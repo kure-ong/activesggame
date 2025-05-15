@@ -14,6 +14,8 @@ export default class AvatarSelectionScene extends Phaser.Scene {
     this.load.image(Assets.UI.Header, 'assets/choose-avatar-header.png');
     this.load.image(Assets.Avatars.Boy, 'assets/avatar-boy.png');
     this.load.image(Assets.Avatars.Girl, 'assets/avatar-girl.png');
+    this.load.image(Assets.Avatars.BoyGrey, 'assets/avatar-boy-grey.png');
+    this.load.image(Assets.Avatars.GirlGrey, 'assets/avatar-girl-grey.png');
     this.load.image(Assets.Buttons.Start, 'assets/start-button.png');
   }
 
@@ -22,28 +24,32 @@ export default class AvatarSelectionScene extends Phaser.Scene {
     this.add.image(CANVAS_WIDTH / 2, 200, Assets.UI.Header);
 
     const boy = this.add
-      .image(CANVAS_WIDTH / 2 - 150, 600, Assets.Avatars.Boy)
+      .image(CANVAS_WIDTH / 2 - 230, 600, Assets.Avatars.BoyGrey)
       .setInteractive();
     const girl = this.add
-      .image(CANVAS_WIDTH / 2 + 150, 600, Assets.Avatars.Girl)
+      .image(CANVAS_WIDTH / 2 + 230, 600, Assets.Avatars.GirlGrey)
       .setInteractive();
 
     const start = this.add
-      .image(CANVAS_WIDTH / 2, 900, Assets.Buttons.Start)
+      .image(CANVAS_WIDTH / 2, 1100, Assets.Buttons.Start)
       .setAlpha(0.5)
       .setInteractive();
 
     boy.on('pointerdown', () => {
       this.selectedAvatar = 'boy';
-      boy.setTint(0x00ff00);
-      girl.clearTint();
+      // boy.setTint(0x00ff00);
+      // girl.clearTint();
+      boy.setTexture(Assets.Avatars.Boy);
+      girl.setTexture(Assets.Avatars.GirlGrey);
       start.setAlpha(1);
     });
 
     girl.on('pointerdown', () => {
       this.selectedAvatar = 'girl';
-      girl.setTint(0x00ff00);
-      boy.clearTint();
+      // girl.setTint(0x00ff00);
+      // boy.clearTint();
+      boy.setTexture(Assets.Avatars.BoyGrey);
+      girl.setTexture(Assets.Avatars.Girl);
       start.setAlpha(1);
     });
 

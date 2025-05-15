@@ -15,7 +15,6 @@ export default class GameAnalysisScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
     this.load.image(Assets.UI.Analysis1, 'assets/game-analysis1.png');
     this.load.image(Assets.UI.Analysis2, 'assets/game-analysis2.png');
     this.load.image(Assets.UI.Analysis3, 'assets/game-analysis3.png');

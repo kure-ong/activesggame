@@ -16,9 +16,7 @@ export default class GameFinishScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(Assets.Backgrounds.Finish, 'assets/finish-background.png');
-    this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
-    this.load.image(Assets.Backgrounds.Racetrack, 'assets/racetrack.png');
+    // this.load.image(Assets.Backgrounds.Finish, 'assets/finish-background.png');
     this.load.image(Assets.Avatars.CelebrateBoy, 'assets/avatar-celebrate-boy.png');
     this.load.image(Assets.Avatars.CelebrateGirl, 'assets/avatar-celebrate-girl.png');
     // this.load.spritesheet(Assets.Avatars.CelebrateGirl, 'assets/avatar-celebrate-girl.png', {

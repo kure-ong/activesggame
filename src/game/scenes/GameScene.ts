@@ -30,11 +30,13 @@ export default class GameScene extends Phaser.Scene {
   private currentQuestionIndex = 0;
   private currentQuestion!: Question;
   private goTimerText!: Phaser.GameObjects.Text;
+  private goTimerImg!: Phaser.GameObjects.Image;
   private goTimerEvent!: Phaser.Time.TimerEvent;
   private gameTimerText!: Phaser.GameObjects.Text;
   private gameCountdownValue = GAME_DURATION;
   private gameCountdownInterval!: Phaser.Time.TimerEvent;
   private answerTexts: Phaser.GameObjects.Text[] = [];
+  private answerBtns: Phaser.GameObjects.Image[] = [];
   private buttonPressCount = 0;
   private selectedLane = 1;
   private originalLaneWidth!: number;
@@ -61,16 +63,27 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.image(Assets.Backgrounds.Play, 'assets/play-background.png');
-    this.load.image(Assets.UI.Track, 'assets/racetrack.png');
+    this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
+    this.load.image(Assets.Backgrounds.Clouds, 'assets/clouds.png');
+    this.load.image(Assets.Backgrounds.Racetrack, 'assets/racetrack.png');
     this.load.image(Assets.UI.LaneOptions, 'assets/lane-options.png')
     this.load.image(Assets.Avatars.RunBoy, 'assets/run-boy.png');
     this.load.image(Assets.Avatars.RunGirl, 'assets/run-girl.png');
     this.load.image(Assets.UI.QuestionBox, 'assets/questionbox-background.png');
+    this.load.image(Assets.Buttons.BlueA, 'assets/btn-blue-a.png');
+    this.load.image(Assets.Buttons.BlueB, 'assets/btn-blue-b.png');
+    this.load.image(Assets.Buttons.BlueC, 'assets/btn-blue-c.png');
+    this.load.image(Assets.Buttons.RedA, 'assets/btn-red-a.png');
+    this.load.image(Assets.Buttons.RedB, 'assets/btn-red-b.png');
+    this.load.image(Assets.Buttons.RedC, 'assets/btn-red-c.png');
     this.load.image(Assets.UI.Modal, 'assets/modal-background.png');
     this.load.image(Assets.UI.TimerBar, 'assets/timerbar.png');
     this.load.image(Assets.UI.TimerBarInner, 'assets/timerbar-inner.png');
     this.load.image(Assets.UI.TimerBarIcon, 'assets/timerbar-icon.png');
+    this.load.image(Assets.Countdown.Count1, 'assets/gotimer-1.png');
+    this.load.image(Assets.Countdown.Count2, 'assets/gotimer-2.png');
+    this.load.image(Assets.Countdown.Count3, 'assets/gotimer-3.png');
+    this.load.image(Assets.Countdown.CountGo, 'assets/gotimer-go.png');
   }
 
   init() {
@@ -83,10 +96,18 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
-    // this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Play);
+    const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky).setOrigin(0.5, 0);
+    const skyBgAspectHeight = skyBg.height * (CANVAS_WIDTH / skyBg.width)
+    skyBg.setDisplaySize(CANVAS_WIDTH, skyBgAspectHeight);
+    
+    const cloudsImg = this.add.image(CANVAS_WIDTH / 2, -100, Assets.Backgrounds.Clouds).setOrigin(0.5, 0);
+    const cloudsImgAspectHeight = cloudsImg.height * ((CANVAS_WIDTH * 2) / cloudsImg.width)
+    cloudsImg.setDisplaySize(CANVAS_WIDTH * 2, cloudsImgAspectHeight);
+    
     const trackImg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.Track).setOrigin(0.5, 0);
     const trackImgAspectHeight = trackImg.height * (CANVAS_WIDTH / trackImg.width)
     trackImg.setDisplaySize(CANVAS_WIDTH, trackImgAspectHeight);
+
 
     this.laneOptions = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.LaneOptions).setOrigin(0.5, 0);
     this.laneOptions.setDisplaySize(640, this.laneOptions.height * (640 / this.laneOptions.width));
@@ -119,7 +140,7 @@ export default class GameScene extends Phaser.Scene {
     this.questions = getRandomQuestions();
 
     this.gameTimerText = this.add
-      .text(CANVAS_WIDTH / 2, 50, formatTime(this.gameCountdownValue), {
+      .text(CANVAS_WIDTH / 2, 120, formatTime(this.gameCountdownValue), {
         fontSize: '48px',
         ...globalTextStyle
       })
@@ -263,7 +284,7 @@ export default class GameScene extends Phaser.Scene {
       ease: 'Power2', // smooth easing
       onUpdate: () => {
         // Optional: update highlights during movement (not just after)
-        updateAnswerHighlights(this.answerTexts, this.selectedLane);
+        updateAnswerHighlights(this.answerBtns, this.answerTexts, this.selectedLane);
       }
     });
   }
@@ -281,8 +302,8 @@ export default class GameScene extends Phaser.Scene {
       loop: true,
       callback: () => {
         this.gameCountdownValue--;
-        this.gameTimerText.setText(formatTime(this.gameCountdownValue));
-        this.gameTimerText.setStyle({
+        this.gameTimerText.setText(formatTime(this.gameCountdownValue))
+        .setStyle({
           fontSize: '48px',
           ...globalTextStyle
         });
@@ -296,25 +317,31 @@ export default class GameScene extends Phaser.Scene {
     this.currentQuestion = this.questions[this.currentQuestionIndex];
     this.goCountdown = GO_TIMER_DURATION;
 
-    this.goTimerText = this.add
-      .text(CANVAS_WIDTH / 2, 300, this.goCountdown.toString(), {
-        fontSize: '72px',
-        ...globalTextStyle
-      })
-      .setOrigin(0.5);
+    // this.goTimerText = this.add
+    //   .text(CANVAS_WIDTH / 2, 300, this.goCountdown.toString(), {
+    //     fontSize: '72px',
+    //     ...globalTextStyle
+    //   })
+    //   .setOrigin(0.5);
 
-      this.goTimerEvent = this.time.addEvent({
+    this.goTimerImg = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, Assets.Countdown.Count3);
+
+    this.goTimerEvent = this.time.addEvent({
       delay: 1000,
       loop: true,
       callback: () => {
         this.goCountdown--;
         if (this.goCountdown > 0) {
-          this.goTimerText.setText(this.goCountdown.toString());
+          // this.goTimerText.setText(this.goCountdown.toString());
+          const key = `Count${this.goCountdown}` as keyof typeof Assets.Countdown;
+          this.goTimerImg.setTexture(Assets.Countdown[key]);
         } else if (this.goCountdown === 0) {
-          this.goTimerText.setText('Go!');
+          // this.goTimerText.setText('Go!');
+          this.goTimerImg.setTexture(Assets.Countdown.CountGo);
         } else {
+          this.goTimerImg.destroy();
           this.goTimerEvent.remove();
-          this.goTimerText.destroy();
+          // this.goTimerText.destroy();
           this.inputLocked = false;
           this.startGameCountdown();
           this.displayQuestion(this.currentQuestion);
@@ -327,29 +354,39 @@ export default class GameScene extends Phaser.Scene {
     this.buttonPressCount = 0;
     this.questionBox?.destroy();
   
-    const topicText = this.add.text(CANVAS_WIDTH / 2, 150, question.topic, {
-      ...globalTextStyle,
-      fontSize: '36px',
-    }).setOrigin(0.5);
-  
-    const questionText = this.add.text(CANVAS_WIDTH / 2, 250, question.question, {
+    // const topicText = this.add.text(CANVAS_WIDTH / 2, 150, question.topic, {
+    //   ...globalTextStyle,
+    //   fontSize: '36px',
+    // }).setOrigin(0.5);
+
+    const questionBoxBackground = this.add.image(0, 0, Assets.UI.QuestionBox).setOrigin(0.5, 0);
+
+    const questionText = this.add.text(0, 100, question.question, {
       ...globalTextStyle,
       fontSize: '32px',
+      color: '#9D1E65',
       wordWrap: { width: 800 },
     }).setOrigin(0.5);
-  
+
+    this.answerBtns = question.answers.map((answer, i) => {
+      const key = i === this.selectedLane
+      ? `Blue${String.fromCharCode(65 + i)}`
+      : `Red${String.fromCharCode(65 + i)}`;
+      const label = Assets.Buttons[key as keyof typeof Assets.Buttons]
+      return this.add.image(-questionBoxBackground.width / 2 + 80, 200 + i * 70,label).setOrigin(0, 0.5)
+    });
+    
     this.answerTexts = question.answers.map((answer, i) =>
-      this.add.text(LANES_X[i], 400, answer, {
+      this.add.text(-questionBoxBackground.width / 2 + 162, 200 + i * 70, answer, {
         ...globalTextStyle,
         fontSize: '28px',
-        color: '#fff',
-        backgroundColor: i === this.selectedLane ? '#4444ff' : undefined,
-      }).setOrigin(0.5)
+        color: i === this.selectedLane ? '#1DABE3':'#9D1E65',
+      }).setOrigin(0, 0.5)
     );
+
+    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,questionText,...this.answerTexts,...this.answerBtns]);
   
-    this.questionBox = this.add.container(0, 0, [topicText, questionText, ...this.answerTexts]);
-  
-    this.createTimerBar(200,500,QUESTION_TIME_LIMIT);
+    this.createTimerBar(240,180,QUESTION_TIME_LIMIT);
   
   }
 
@@ -476,6 +513,9 @@ export default class GameScene extends Phaser.Scene {
   private endGame() {
     this.stopTimerBar();
     this.score += this.gameCountdownValue; // ✅ Add remaining time
+    if (this.gameCountdownInterval) {
+      this.gameCountdownInterval.remove(false);
+    }
     console.log('Final score:', this.score);
 
     console.log('Game Ended')

@@ -22,7 +22,7 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(function PhaserGame
 
     const init = async () => {
       // ✅ Load font before starting the game
-      await loadFont('Houschka Rounded', '/assets/fonts/Houschka Rounded Medium.ttf');
+      await loadFont('Houschka Rounded', '/assets/fonts/Houschka Rounded Bold.ttf');
 
       // Always destroy previous game instance in dev
       if (gameRef.current) {
