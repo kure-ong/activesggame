@@ -44,6 +44,8 @@ export const Assets = {
     Analysis1: 'game-analysis1',
     Analysis2: 'game-analysis2',
     Analysis3: 'game-analysis3',
+    FlagLeft: ' flag-left',
+    FlagRight: ' flag-right',
   },
   Countdown: {
     Count1 : 'count1',

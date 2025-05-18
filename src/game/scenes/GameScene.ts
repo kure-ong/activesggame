@@ -41,6 +41,7 @@ export default class GameScene extends Phaser.Scene {
   private selectedLane = 1;
   private originalLaneWidth!: number;
   private originalLaneHeight!: number;
+  private trackImgAspectHeight!: number;
   private laneOptions!: Phaser.GameObjects.Image;
   private laneStep = 50; // pixels to move per press
   private laneTargetY = 600; // match this.avatar.y
@@ -57,6 +58,18 @@ export default class GameScene extends Phaser.Scene {
   private timerBarContainer!: Phaser.GameObjects.Container;
   private autoSkipTimer!: Phaser.Time.TimerEvent;
   private score = 0;
+
+  private readonly FLAG_PADDING = 175;
+  private readonly FLAG_SCALE_START = 0.2;
+  private readonly FLAG_SCALE_END = 20;
+  private readonly FLAG_WIDTH = 60;
+  private readonly FLAG_HEIGHT = 259;
+  private readonly FLAG_DUPLICATES = 4;
+
+  private flags: { left: Phaser.GameObjects.Image; right: Phaser.GameObjects.Image; flagCrossedPeak: boolean; progressAfterPeak: number; leftNextX: number; rightNextX: number; nextY: number; nextScale: number;velocityY:number;}[] = [];
+  private currentFlagIndex: number = 0;
+  private createFlagIndex: number = 2;
+  private flagStep: number = 25;
 
   constructor() {
     super('GameScene');
@@ -84,6 +97,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(Assets.Countdown.Count2, 'assets/gotimer-2.png');
     this.load.image(Assets.Countdown.Count3, 'assets/gotimer-3.png');
     this.load.image(Assets.Countdown.CountGo, 'assets/gotimer-go.png');
+    this.load.image(Assets.UI.FlagLeft, 'assets/flag-left.png');
+    this.load.image(Assets.UI.FlagRight, 'assets/flag-right.png');
   }
 
   init() {
@@ -93,6 +108,8 @@ export default class GameScene extends Phaser.Scene {
     this.isLaneAnimating = false;
     this.inputLocked = true;
     this.score = 0;
+    this.currentFlagIndex = 0;
+    this.createFlagIndex = 2;
   }
 
   create(data: GameSceneData) {
@@ -105,8 +122,8 @@ export default class GameScene extends Phaser.Scene {
     cloudsImg.setDisplaySize(CANVAS_WIDTH * 2, cloudsImgAspectHeight);
     
     const trackImg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.Track).setOrigin(0.5, 0);
-    const trackImgAspectHeight = trackImg.height * (CANVAS_WIDTH / trackImg.width)
-    trackImg.setDisplaySize(CANVAS_WIDTH, trackImgAspectHeight);
+    this.trackImgAspectHeight = trackImg.height * (CANVAS_WIDTH / trackImg.width)
+    trackImg.setDisplaySize(CANVAS_WIDTH, this.trackImgAspectHeight);
 
 
     this.laneOptions = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.LaneOptions).setOrigin(0.5, 0);
@@ -115,10 +132,9 @@ export default class GameScene extends Phaser.Scene {
     this.originalLaneHeight = this.laneOptions.displayHeight;
     this.laneOptions.setY(0);
 
-    const trackContainer = this.add.container(0, 0, [trackImg, this.laneOptions]);
-    trackContainer.setY(CANVAS_HEIGHT - trackImgAspectHeight);
-
-
+    const trackContainer = this.add.container(0, 0, [trackImg, this.laneOptions]).setDepth(2);
+    trackContainer.setY(CANVAS_HEIGHT - this.trackImgAspectHeight);
+    
     // const shape = this.make.graphics({ x: 0, y: trackImg.height * (CANVAS_WIDTH / trackImg.width), add: true });
     // shape.fillStyle(0xffffff);
     // shape.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT/2);
@@ -134,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
     
     const avatarGender =
       data.avatarKey === 'boy' ? Assets.Avatars.RunBoy : Assets.Avatars.RunGirl;
-    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1500, avatarGender);
+    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1500, avatarGender).setDepth(9);
     this.avatarKey = data.avatarKey;
 
     this.questions = getRandomQuestions();
@@ -170,6 +186,8 @@ export default class GameScene extends Phaser.Scene {
         if (pad.buttons.some(btn => btn.pressed)) {
           // this.runToAnswer();
           this.moveLaneOptionsDown();
+          this.createFlag();
+          this.playNextFlagTween();
         }
     
       } else {
@@ -185,9 +203,101 @@ export default class GameScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
           // this.runToAnswer();
           this.moveLaneOptionsDown();
+          this.createFlag();
+          this.playNextFlagTween();
         }
       }
     }
+  }
+
+  private createFlag() {
+      // this.flags = [];
+
+      if (this.createFlagIndex == 2) {
+        const left = this.add.image(this.FLAG_PADDING, CANVAS_HEIGHT - this.trackImgAspectHeight, Assets.UI.FlagLeft)
+          .setOrigin(0.5, 0)
+          .setScale(this.FLAG_SCALE_START)
+          .setDepth(0) // start behind track
+          .setVisible(false);
+
+        const right = this.add.image(CANVAS_WIDTH - this.FLAG_PADDING, CANVAS_HEIGHT - this.trackImgAspectHeight, Assets.UI.FlagRight)
+          .setOrigin(0.5, 0)
+          .setScale(this.FLAG_SCALE_START)
+          .setDepth(0)
+          .setVisible(false);
+
+        this.flags.push({ left, right, flagCrossedPeak:false, progressAfterPeak: 0, leftNextX: 0, rightNextX: 0, nextY: 0, nextScale: this.FLAG_SCALE_START,velocityY:this.flagStep });
+        this.createFlagIndex = 0;
+        // Cycle to next pair
+        this.currentFlagIndex = (this.currentFlagIndex + 1) % this.FLAG_DUPLICATES;
+        // console.log('flagindex:' + this.currentFlagIndex);
+        console.log(this.flags);
+      } else {
+        this.createFlagIndex++;
+      }
+
+  }
+
+  private playNextFlagTween() {
+    // const { left, right } = this.flags[this.currentFlagIndex];
+
+    const startY = CANVAS_HEIGHT - this.trackImgAspectHeight;
+    const peakY = startY - (this.FLAG_HEIGHT * this.FLAG_SCALE_START);
+    const endY = CANVAS_HEIGHT + 200;
+
+    this.flags.forEach((flagGroup) =>{
+      // console.log(flagGroup.left,flagGroup.right,flagGroup.flagCrossedPeak,flagGroup.progressAfterPeak,flagGroup.nextY,flagGroup.nextScale);
+
+      // flagGroup.nextY = flagGroup.left.y + this.flagStep;
+      flagGroup.velocityY = flagGroup.velocityY * 1.1; 
+      flagGroup.nextY = flagGroup.left.y + flagGroup.velocityY;
+      flagGroup.leftNextX = flagGroup.left.x - flagGroup.velocityY*1.7;
+      flagGroup.rightNextX = flagGroup.right.x + flagGroup.velocityY*1.7;
+      flagGroup.progressAfterPeak = flagGroup.flagCrossedPeak? Phaser.Math.Clamp((flagGroup.nextY - peakY) / (endY - peakY), 0, 1) : 0;
+      flagGroup.nextScale = this.FLAG_SCALE_START + (this.FLAG_SCALE_END - this.FLAG_SCALE_START) * flagGroup.progressAfterPeak;
+
+      if (!flagGroup.flagCrossedPeak) {
+        flagGroup.left.setVisible(true);
+        flagGroup.right.setVisible(true);
+        this.tweens.add({
+          targets: [flagGroup.left,flagGroup.right],
+          y: peakY,
+          duration: 400,
+          ease: 'Sine.easeOut',
+          onComplete: () => {
+            flagGroup.flagCrossedPeak = true;
+            flagGroup.left.setDepth(3);
+            flagGroup.right.setDepth(3);
+          }
+        })
+      }else if (flagGroup.leftNextX <= -100 || flagGroup.rightNextX >= CANVAS_WIDTH+100 )  {
+        flagGroup.left.destroy();
+        flagGroup.right.destroy();
+      } else {
+        this.tweens.add({
+          targets: flagGroup.left,
+          x: flagGroup.leftNextX,
+          y: flagGroup.nextY,
+          scale: flagGroup.nextScale,
+          duration: 400,
+          ease: 'Sine.easeOut',
+          onComplete: () => {
+            console.log(flagGroup.flagCrossedPeak,flagGroup.progressAfterPeak, flagGroup.nextScale, flagGroup.nextY);
+          }
+        })
+        this.tweens.add({
+          targets: flagGroup.right,
+          x: flagGroup.rightNextX,
+          y: flagGroup.nextY,
+          scale: flagGroup.nextScale,
+          duration: 400,
+          ease: 'Sine.easeOut',
+          onComplete: () => {
+            // console.log(flagGroup.flagCrossedPeak,flagGroup.progressAfterPeak, flagGroup.nextScale, flagGroup.nextY);
+          }
+        })
+      }
+    })
   }
 
   private moveLaneOptionsDown() {
@@ -324,7 +434,7 @@ export default class GameScene extends Phaser.Scene {
     //   })
     //   .setOrigin(0.5);
 
-    this.goTimerImg = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, Assets.Countdown.Count3);
+    this.goTimerImg = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, Assets.Countdown.Count3).setDepth(10);
 
     this.goTimerEvent = this.time.addEvent({
       delay: 1000,
@@ -519,9 +629,9 @@ export default class GameScene extends Phaser.Scene {
     console.log('Final score:', this.score);
 
     console.log('Game Ended')
-    this.scene.start('GameFinishScene',{ 
-    avatarKey: this.avatarKey,
-    score: this.score 
-    });
+    // this.scene.start('GameFinishScene',{ 
+    // avatarKey: this.avatarKey,
+    // score: this.score 
+    // });
   }
 }
