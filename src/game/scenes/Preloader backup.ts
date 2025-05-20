@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { Assets } from '../constants/assets';
 
 export class Preloader extends Scene
 {
@@ -11,7 +10,7 @@ export class Preloader extends Scene
     init ()
     {
         //  We loaded this image in our Boot Scene, so we can display it here
-        // this.add.image(512, 384, 'background');
+        this.add.image(512, 384, 'background');
 
         //  A simple progress bar. This is the outline of the bar.
         this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
@@ -31,15 +30,10 @@ export class Preloader extends Scene
     preload ()
     {
         //  Load the assets for the game - Replace with your own assets
-        this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
-        this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
-        this.load.image(Assets.Backgrounds.Clouds, 'assets/clouds.png');
-        this.load.image(Assets.Backgrounds.Racetrack, 'assets/racetrack.png');
-        this.load.image(Assets.Backgrounds.FinishLine, 'assets/finish-line.png');
-        this.load.spritesheet(Assets.Parents.Sprite, 'assets/parents-sprite.png', {
-            frameWidth: 500,
-            frameHeight: 446
-        });
+        this.load.setPath('assets');
+
+        this.load.image('logo', 'logo.png');
+        this.load.image('star', 'star.png');
     }
 
     create ()
@@ -48,8 +42,6 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('StartMenuScene');
-        // this.scene.start('GameFinishScene');
-        // this.scene.start('GameScene');
+        this.scene.start('MainMenu');
     }
 }

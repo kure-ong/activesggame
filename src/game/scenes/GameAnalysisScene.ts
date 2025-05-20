@@ -1,10 +1,13 @@
 import Phaser from 'phaser';
+import { startConfettiSequence } from '../utils/confettiAnim';
 import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/gameConfig';
 
 interface GameSceneData {
   score: number;
 }
+
+let confettiTweens: Phaser.Tweens.Tween[] = [];
 
 export default class GameAnalysisScene extends Phaser.Scene {
   private poppers: Phaser.GameObjects.Sprite[] = [];
@@ -19,17 +22,14 @@ export default class GameAnalysisScene extends Phaser.Scene {
     this.load.image(Assets.UI.Analysis2, 'assets/game-analysis2.png');
     this.load.image(Assets.UI.Analysis3, 'assets/game-analysis3.png');
     this.load.image(Assets.Buttons.Done, 'assets/done-button.png');
-    this.load.spritesheet(Assets.Animations.Confetti, 'assets/confetti.png', {
-      frameWidth: 128,
-      frameHeight: 128,
-    });
   }
 
   create(data: GameSceneData) {
     let analysisImageKey: string;
 
-    // this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Play);
     this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Game);
+
+    confettiTweens = startConfettiSequence(this, Assets.Animations.Confetti, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // this.add.text(CANVAS_WIDTH / 2, 200, "Congratulations, you're a family of", {
     //   fontSize: '36px',
@@ -46,37 +46,10 @@ export default class GameAnalysisScene extends Phaser.Scene {
 
     const doneButton = this.add.image(CANVAS_WIDTH / 2, 1650, Assets.Buttons.Done).setInteractive();
     doneButton.on('pointerdown', () => {
-      this.poppers.forEach((popper) => {
-        this.tweens.killTweensOf(popper);
-        // popper.stop();
-        popper.destroy();
-        this.anims.remove('popper');
-      });
+      if (confettiTweens) confettiTweens.forEach(tween => tween.stop());
       this.scene.start('StartMenuScene');
     });
     
-    this.anims.create({
-      key: 'popper',
-      frames: this.anims.generateFrameNumbers(Assets.Animations.Confetti, {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    for (let i = 0; i < 3; i++) {
-      const popper = this.add.sprite(300 + i * 200, 0, Assets.Animations.Confetti).setDepth(1);
-      popper.play('popper');
-      this.poppers.push(popper); // store poppers
-      this.tweens.add({
-        targets: popper,
-        y: 960,
-        duration: 2000,
-        repeat: -1,
-        yoyo: true,
-        delay: i * 200,
-      });
-    }
+    
   }
 }

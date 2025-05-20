@@ -21,16 +21,16 @@ const config: Phaser.Types.Core.GameConfig = {
     backgroundColor: '#672945',
     scene: [
         // Boot,
-        // Preloader,
+        Preloader,
         // MainMenu,
         // MainGame,
         // GameOver
         //
-        // StartMenuScene,
-        // AvatarSelectionScene,
+        StartMenuScene,
+        AvatarSelectionScene,
         GameScene,
-        // GameFinishScene,
-        // GameAnalysisScene,
+        GameFinishScene,
+        GameAnalysisScene,
     ],
     physics: {
         default: 'arcade',

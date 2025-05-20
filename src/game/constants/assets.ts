@@ -6,6 +6,7 @@ export const Assets = {
     Sky: 'sky',
     Clouds: 'clouds',
     Racetrack: 'racetrack',
+    FinishLine: 'finishLine',
   },
   Logos: {
     ActiveParents: 'activeParentsLogo',
@@ -27,9 +28,14 @@ export const Assets = {
     BoyGrey: 'avatarBoyGrey',
     GirlGrey: 'avatarGirlGrey',
     RunBoy: 'runBoy',
+    StopBoy: 'stopBoy',
     RunGirl: 'runGirl',
+    StopGirl: 'stopGirl',
     CelebrateBoy: 'avatarCelebrateBoy',
     CelebrateGirl: 'avatarCelebrateGirl',
+  },
+  Parents: {
+    Sprite: 'sprite',
   },
   UI: {
     GameTitle: 'gameTitle',
@@ -41,11 +47,11 @@ export const Assets = {
     TimerBar: 'timerBar',
     TimerBarInner: 'timerBarInner',
     TimerBarIcon: 'timerBarIcon',
-    Analysis1: 'game-analysis1',
-    Analysis2: 'game-analysis2',
-    Analysis3: 'game-analysis3',
-    FlagLeft: ' flag-left',
-    FlagRight: ' flag-right',
+    Analysis1: 'gameAnalysis1',
+    Analysis2: 'gameAnalysis2',
+    Analysis3: 'gameAnalysis3',
+    FlagLeft: 'flagLeft',
+    FlagRight: 'flagRight',
   },
   Countdown: {
     Count1 : 'count1',
@@ -55,5 +61,7 @@ export const Assets = {
   },
   Animations: {
     Confetti: 'confetti',
+    RibbonLeft: 'ribbonLeft',
+    RibbonRight: 'ribbonRight',
   },
 };
