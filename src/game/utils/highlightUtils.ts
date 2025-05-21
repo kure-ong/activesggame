@@ -4,6 +4,7 @@ import { Assets } from '../constants/assets';
 export function updateAnswerHighlights(
   answerBtns: Phaser.GameObjects.Image[],
   answerTexts: Phaser.GameObjects.Text[],
+  laneHighlights: Phaser.GameObjects.Image[],
   selectedIndex: number
 ) {
   answerTexts.forEach((text, i) => {
@@ -18,5 +19,9 @@ export function updateAnswerHighlights(
       : `Red${String.fromCharCode(65 + i)}`;
 
     btn.setTexture(Assets.Buttons[key as keyof typeof Assets.Buttons]);
+  });
+
+  laneHighlights.forEach((highlight, i) => {
+    highlight.setVisible(i === selectedIndex);
   });
 }

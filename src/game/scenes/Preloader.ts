@@ -31,6 +31,13 @@ export class Preloader extends Scene
     preload ()
     {
         //  Load the assets for the game - Replace with your own assets
+        this.load.audio('bgMusic', 'assets/sfx/bgm.mp3');
+        this.load.audio('321go', 'assets/sfx/321go.mp3');
+        this.load.audio('buttonPress', 'assets/sfx/enter-btn.mp3');
+        this.load.audio('gameComplete', 'assets/sfx/game-complete.mp3');
+        this.load.audio('selection', 'assets/sfx/selection.mp3');
+        this.load.audio('timesUp', 'assets/sfx/timesup.mp3');
+        
         this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
         this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
         this.load.image(Assets.Backgrounds.Clouds, 'assets/clouds.png');
@@ -40,6 +47,7 @@ export class Preloader extends Scene
             frameWidth: 500,
             frameHeight: 446
         });
+        this.load.image(Assets.Logos.ActiveParentsWhite, 'assets/active-parents-logo-white.png');
     }
 
     create ()
@@ -47,6 +55,12 @@ export class Preloader extends Scene
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
 
+         if (!this.sound.get('bgMusic')) {
+            const music = this.sound.add('bgMusic', { loop: true, volume: 0.6 });
+            music.setLoop(true);
+            music.play();
+            this.sound.pauseOnBlur = false; 
+        }
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('StartMenuScene');
         // this.scene.start('GameFinishScene');

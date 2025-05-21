@@ -7,9 +7,11 @@ export const Assets = {
     Clouds: 'clouds',
     Racetrack: 'racetrack',
     FinishLine: 'finishLine',
+    IntroChar: 'introChar',
   },
   Logos: {
-    ActiveParents: 'activeParentsLogo',
+    ActiveParents: 'activeParents',
+    ActiveParentsWhite: 'activeParentsWhite',
   },
   Buttons: {
     LetsPlay: 'letsPlayButton',
@@ -52,6 +54,9 @@ export const Assets = {
     Analysis3: 'gameAnalysis3',
     FlagLeft: 'flagLeft',
     FlagRight: 'flagRight',
+    LaneHighlight0: 'lanehighlight0',
+    LaneHighlight1: 'lanehighlight1',
+    LaneHighlight2: 'lanehighlight2',
   },
   Countdown: {
     Count1 : 'count1',

@@ -3,6 +3,7 @@ import { startConfettiSequence } from '../utils/confettiAnim';
 import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/gameConfig';
 import { aspectResize } from '../utils/displaySizeUtils';
+import { playSound } from '../utils/soundHelper';
 
 interface GameSceneData {
   avatarKey: string;
@@ -36,6 +37,8 @@ export default class GameFinishScene extends Phaser.Scene {
     console.log('Score:', data.score);
     // const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky);
     // skyBg.setOrigin(skyBg.originX, 0);
+
+    this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
 
     const skyBg = this.add.image(CANVAS_WIDTH / 2, -100, Assets.Backgrounds.Sky).setOrigin(0.5, 0);
     aspectResize(skyBg,CANVAS_WIDTH);
@@ -106,6 +109,7 @@ export default class GameFinishScene extends Phaser.Scene {
     
     this.time.delayedCall(1400, () => {
       confettiTweens = startConfettiSequence(this, Assets.Animations.Confetti, CANVAS_WIDTH, CANVAS_HEIGHT);
+      playSound(this,'gameComplete');
     });
 
     const delay = 1360;

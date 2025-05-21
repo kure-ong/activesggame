@@ -4,6 +4,7 @@ import { GamepadHandler } from '../utils/gamepadUtils';
 import { formatTime } from '../utils/formatTime';
 import { updateAnswerHighlights } from '../utils/highlightUtils';
 import { aspectResize } from '../utils/displaySizeUtils';
+import { playSound } from '../utils/soundHelper';
 import { Assets } from '../constants/assets';
 import {
   CANVAS_WIDTH,
@@ -15,8 +16,10 @@ import {
   GAME_DURATION,
   GO_TIMER_DURATION,
   MODAL_DURATION,
+  INPUT_KEYS,
 } from '../constants/gameConfig';
 import { globalTextStyle } from '../constants/textStyle';
+import { Asset } from 'next/font/google';
 
 interface GameSceneData {
   avatarKey: string;
@@ -50,6 +53,7 @@ export default class GameScene extends Phaser.Scene {
   private originalLaneWidth!: number;
   private originalLaneHeight!: number;
   private trackImgAspectHeight!: number;
+  private laneHighlights: Phaser.GameObjects.Image[] = [];
   private laneOptions!: Phaser.GameObjects.Image;
   private laneStep = 50; // pixels to move per press
   private laneTargetY = 600; // match this.avatar.y
@@ -61,8 +65,11 @@ export default class GameScene extends Phaser.Scene {
   private padHandler = new GamepadHandler();
   private prevPadButtons: boolean[] = [];
   private padEnterKey = 15;
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private enterKey!: Phaser.Input.Keyboard.Key;
+  // private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  // private enterKey!: Phaser.Input.Keyboard.Key;
+  private leftKey!: Phaser.Input.Keyboard.Key;
+  private rightKey!: Phaser.Input.Keyboard.Key;
+  private confirmKey!: Phaser.Input.Keyboard.Key;
   private inputLocked = true;
   private timerBarTween?: Phaser.Tweens.Tween;
   private timerBarContainer!: Phaser.GameObjects.Container;
@@ -80,6 +87,8 @@ export default class GameScene extends Phaser.Scene {
   private currentFlagIndex: number = 0;
   private createFlagIndex: number = 2;
   private flagStep: number = 25;
+
+  private blackOverlay!: Phaser.GameObjects.Graphics;
 
   constructor() {
     super('GameScene');
@@ -126,6 +135,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(Assets.Countdown.CountGo, 'assets/gotimer-go.png');
     this.load.image(Assets.UI.FlagLeft, 'assets/flag-left.png');
     this.load.image(Assets.UI.FlagRight, 'assets/flag-right.png');
+    this.load.image(Assets.UI.LaneHighlight0, 'assets/lanehighlight0.png');
+    this.load.image(Assets.UI.LaneHighlight1, 'assets/lanehighlight1.png');
+    this.load.image(Assets.UI.LaneHighlight2, 'assets/lanehighlight2.png');
     // this.load.spritesheet(Assets.Parents.Sprite, 'assets/parents-sprite.png', {
     //   frameWidth: 500,
     //   frameHeight: 446
@@ -144,6 +156,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
+    this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
     const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky).setOrigin(0.5, 0);
     const skyBgAspectHeight = skyBg.height * (CANVAS_WIDTH / skyBg.width)
     skyBg.setDisplaySize(CANVAS_WIDTH, skyBgAspectHeight);
@@ -155,7 +168,6 @@ export default class GameScene extends Phaser.Scene {
     const trackImg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.Track).setOrigin(0.5, 0);
     this.trackImgAspectHeight = trackImg.height * (CANVAS_WIDTH / trackImg.width)
     trackImg.setDisplaySize(CANVAS_WIDTH, this.trackImgAspectHeight);
-
 
     this.laneOptions = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.LaneOptions).setOrigin(0.5, 0);
     this.laneOptions.setDisplaySize(640, this.laneOptions.height * (640 / this.laneOptions.width));
@@ -180,7 +192,7 @@ export default class GameScene extends Phaser.Scene {
 
     parents.play('wave');
 
-    // const shape = this.make.graphics({ x: 0, y: trackImg.height * (CANVAS_WIDTH / trackImg.width), add: true });
+    // const shape = this.make.graphics({ x: 0, y: 0, add: true } as any);
     // shape.fillStyle(0xffffff);
     // shape.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT/2);
     // shape.setDepth(10);
@@ -211,7 +223,7 @@ export default class GameScene extends Phaser.Scene {
       repeat: -1
     });
     
-    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1500, this.avatarStopGender,this.selectedLane).setDepth(9);
+    this.avatar = this.add.sprite(LANES_X[this.selectedLane], 1500, this.avatarStopGender,this.selectedLane).setDepth(7);
     this.avatarKey = data.avatarKey;
 
     this.questions = getRandomQuestions();
@@ -225,9 +237,14 @@ export default class GameScene extends Phaser.Scene {
 
     this.startGoTimer();
 
+    // if (!USE_GAMEPAD) {
+    //   this.cursors = this.input.keyboard!.createCursorKeys();
+    //   this.enterKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    // }
     if (!USE_GAMEPAD) {
-      this.cursors = this.input.keyboard!.createCursorKeys();
-      this.enterKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+      this.leftKey = this.input.keyboard!.addKey(INPUT_KEYS.LEFT);
+      this.rightKey = this.input.keyboard!.addKey(INPUT_KEYS.RIGHT);
+      this.confirmKey = this.input.keyboard!.addKey(INPUT_KEYS.CONFIRM);
     }
     this.avatarState = 'idle';
   }
@@ -280,27 +297,54 @@ export default class GameScene extends Phaser.Scene {
     
       } else {
         // Keyboard mode
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.left!) && this.selectedLane > 0) {
+        if (Phaser.Input.Keyboard.JustDown(this.leftKey) && this.selectedLane > 0) {
           this.moveLane(-1);
         }
     
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.right!) && this.selectedLane < 2) {
+        if (Phaser.Input.Keyboard.JustDown(this.rightKey) && this.selectedLane < 2) {
           this.moveLane(1);
         }
     
-        if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
+        if (Phaser.Input.Keyboard.JustDown(this.confirmKey)) {
           this.moveLaneOptionsDown();
           this.createFlag();
           this.playNextFlagTween();
           this.runningHandler();
         }
         
-        if (Phaser.Input.Keyboard.JustUp(this.enterKey)) {
+        if (Phaser.Input.Keyboard.JustUp(this.confirmKey)) {
           this.stopHandler();
         }
       }
     }
   }
+
+  private destroyLaneHighlights() {
+    if (this.laneHighlights && this.laneHighlights.length > 0) {
+      this.laneHighlights.forEach(h => h.destroy());
+      this.laneHighlights = [];
+    }
+  }
+
+  private setBlackOverlay() {
+    this.blackOverlay = this.make.graphics({ x: 0, y: 0, add: true } as any);
+    this.blackOverlay.fillStyle(0x000000, 0.7)
+    .fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+    .setDepth(8);
+  }
+
+  private fadeOutBlackOverlay(duration: number = 100) {
+  if (!this.blackOverlay) return;
+
+  this.tweens.add({
+    targets: this.blackOverlay,
+    alpha: 0,
+    duration,
+    onComplete: () => {
+      this.blackOverlay.destroy();
+    }
+  });
+}
 
   private runningHandler() {
     if (this.avatarState === 'idle' || this.avatarState === 'stopping') {
@@ -461,6 +505,7 @@ export default class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut',
             onComplete: () => {
               console.log('Lane reached avatar with bounce-pop!');
+              playSound(this, 'buttonPress');
               this.isLaneAnimating = false;
               this.inputLocked = false;
               this.registerAnswer();
@@ -469,6 +514,7 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     } else {
+      playSound(this, 'buttonPress');
       this.tweens.add({
         targets: this.laneOptions,
         y: nextY,
@@ -505,6 +551,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private moveLane(direction: -1 | 1) {
+      playSound(this, 'selection');
     // this.selectedLane += direction;
     // this.avatar.setX(LANES_X[this.selectedLane]);
     // updateAnswerHighlights(this.answerTexts, this.selectedLane);
@@ -522,7 +569,7 @@ export default class GameScene extends Phaser.Scene {
       ease: 'Power2', // smooth easing
       onUpdate: () => {
         // Optional: update highlights during movement (not just after)
-        updateAnswerHighlights(this.answerBtns, this.answerTexts, this.selectedLane);
+        updateAnswerHighlights(this.answerBtns, this.answerTexts, this.laneHighlights, this.selectedLane);
         if (this.avatarState === 'idle' || this.avatarState === 'stopping') {
           this.stopRunAndShowPose(this.selectedLane);
         }
@@ -550,6 +597,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private startGoTimer() {
+    this.setBlackOverlay();
     this.questionBox?.destroy();
     this.currentQuestion = this.questions[this.currentQuestionIndex];
     this.goCountdown = GO_TIMER_DURATION;
@@ -562,7 +610,8 @@ export default class GameScene extends Phaser.Scene {
     //   .setOrigin(0.5);
 
     this.goTimerImg = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, Assets.Countdown.Count3).setDepth(10);
-
+    playSound(this, '321go');
+    this.displayTopic(this.currentQuestion);
     this.goTimerEvent = this.time.addEvent({
       delay: 1000,
       loop: true,
@@ -578,6 +627,7 @@ export default class GameScene extends Phaser.Scene {
         } else {
           this.goTimerImg.destroy();
           this.goTimerEvent.remove();
+          this.fadeOutBlackOverlay();
           // this.goTimerText.destroy();
           this.inputLocked = false;
           this.startGameCountdown();
@@ -587,14 +637,27 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
+  private displayTopic(question: Question) {
+    this.questionBox?.destroy();
+    this.timerBarContainer?.destroy();
+    this.stopTimerBar();
+    this.inputLocked = true;
+    
+    const questionBoxBackground = this.add.image(0, 0, Assets.UI.QuestionBox).setOrigin(0.5, 0);
+    const topicText = this.add.text(0, questionBoxBackground.height / 2, question.topic, {
+      ...globalTextStyle,
+      fontSize: '42px',
+      color: '#9D1E65',
+      wordWrap: { width: 800 },
+    }).setOrigin(0.5);
+    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,topicText]).setDepth(999);
+  }
+
   private displayQuestion(question: Question) {
     this.questionBox?.destroy();
+    this.destroyLaneHighlights();
+    this.inputLocked = false;
   
-    // const topicText = this.add.text(CANVAS_WIDTH / 2, 150, question.topic, {
-    //   ...globalTextStyle,
-    //   fontSize: '36px',
-    // }).setOrigin(0.5);
-
     const questionBoxBackground = this.add.image(0, 0, Assets.UI.QuestionBox).setOrigin(0.5, 0);
 
     const questionText = this.add.text(0, 100, question.question, {
@@ -619,6 +682,14 @@ export default class GameScene extends Phaser.Scene {
         color: i === this.selectedLane ? '#1DABE3':'#9D1E65',
       }).setOrigin(0, 0.5)
     );
+
+    this.laneHighlights = question.answers.map((answer, i) => {
+      const key = `LaneHighlight${i}` as keyof typeof Assets.UI;
+      let x = LANES_X[i];
+      if (i === 0) x += 72; // move right
+      if (i === 2) x -= 72; // move left
+      return this.add.image(x, CANVAS_HEIGHT - this.trackImgAspectHeight,Assets.UI[key]).setDepth(5).setOrigin(0.5, 0).setVisible(i === this.selectedLane);
+    });
 
     this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,questionText,...this.answerTexts,...this.answerBtns]);
   
@@ -677,10 +748,11 @@ export default class GameScene extends Phaser.Scene {
 
     if (isCorrect) {
       this.score += 5;
-      this.goToNextQuestion();
+      this.showModal();
+      // this.goToNextQuestion();
     } else {
       this.resetLaneOptions();
-      this.showModal(false);
+      this.showModal();
     }
   }
 
@@ -693,21 +765,24 @@ export default class GameScene extends Phaser.Scene {
         this.startGoTimer();
       } else {
         this.currentQuestion = this.questions[this.currentQuestionIndex];
-        this.displayQuestion(this.currentQuestion);
+        this.displayTopic(this.currentQuestion);
+        this.time.delayedCall(1300,() => {
+          this.displayQuestion(this.currentQuestion);
+        })
       }
     } else {
       this.endGame();
     }
   }
 
-  private showModal(isCorrect: boolean) {
+  private showModal() {
     this.inputLocked = true;
     this.gameCountdownInterval.paused = true;
     this.stopTimerBar();
-
+    this.setBlackOverlay();
     const bg = this.add.image(0,0, Assets.UI.Modal).setOrigin(0.5);
     const text = this.add
-      .text(-bg.width / 2 + 40, 40, isCorrect ? 'Correct!' : this.currentQuestion.didYouKnow, {
+      .text(-bg.width / 2 + 40, 40, this.currentQuestion.didYouKnow, {
         ...globalTextStyle,
         fontSize: '32px',
         color: '#000',
@@ -716,9 +791,9 @@ export default class GameScene extends Phaser.Scene {
       })
       .setOrigin(0, 0.5);
 
-    this.modal = this.add.container(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, [bg, text])
+    this.modal = this.add.container(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 100, [bg, text])
       .setAlpha(0)
-      .setDepth(8);
+      .setDepth(9);
 
     this.modal.setSize(bg.width,bg.height);
 
@@ -736,6 +811,7 @@ export default class GameScene extends Phaser.Scene {
         duration: 400,
         ease: 'Power2',
         onComplete: () => {
+          this.fadeOutBlackOverlay();
           this.modal.destroy();
           this.inputLocked = false;
           this.gameCountdownInterval.paused = false;
