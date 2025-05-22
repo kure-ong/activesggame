@@ -12,6 +12,12 @@ export const Assets = {
   Logos: {
     ActiveParents: 'activeParents',
     ActiveParentsWhite: 'activeParentsWhite',
+    BU: {
+      ActiveParents: 'activeParentsBU',
+      ActiveHealth: 'activeHealthBU',
+      ActiveSg: 'activeSgBU',
+      ActiveSgAC: 'activeSgACBU',
+    }
   },
   Buttons: {
     LetsPlay: 'letsPlayButton',
@@ -37,7 +43,7 @@ export const Assets = {
     CelebrateGirl: 'avatarCelebrateGirl',
   },
   Parents: {
-    Sprite: 'sprite',
+    Sprite: 'parentsSprite',
   },
   UI: {
     GameTitle: 'gameTitle',

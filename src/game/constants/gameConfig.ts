@@ -4,7 +4,7 @@ export const CANVAS_WIDTH = 1080;
 export const CANVAS_HEIGHT = 1920;
 export const LANES_X = [150, 540, 930];
 export const MAX_QUESTIONS = 5;
-export const QUESTION_TIME_LIMIT = 6700 // 1000 = 1 sec
+export const QUESTION_TIME_LIMIT = 12000 // 1000 = 1 sec
 export const PRESS_TARGET = 1;
 export const GO_TIMER_DURATION = 3;
 // export const GO_TIMER_DURATION = 1;

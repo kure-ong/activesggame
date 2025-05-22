@@ -56,13 +56,6 @@ export default class GameFinishScene extends Phaser.Scene {
     const parents = this.add.sprite(CANVAS_WIDTH / 1.4, CANVAS_HEIGHT / 2.1, Assets.Parents.Sprite);
     aspectResize(parents,700);
 
-    this.anims.create({
-      key: 'wave',
-      frames: this.anims.generateFrameNumbers(Assets.Parents.Sprite, { start: 0, end: 1 }),
-      frameRate: 4, // Adjust to your preference (e.g. 4–8)
-      repeat: -1    // -1 = loop forever
-    });
-
     parents.play('wave');
 
     const ribbonLeft = this.add.image(-70, CANVAS_HEIGHT/2+320, Assets.Animations.RibbonLeft).setOrigin(0, 0.5);

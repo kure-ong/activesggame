@@ -1,3 +1,5 @@
+import { Assets } from './constants/assets';
+
 // questionBank.ts
 // Holds the dummy data for genres, topics, questions and answers.
 
@@ -7,7 +9,8 @@ export interface Question {
   question: string;
   answers: string[];
   correctIndex: number;
-  didYouKnow: string,
+  didYouKnow: string;
+  buLogo: string;
 }
 
 const questions: Question[] = [
@@ -18,6 +21,7 @@ const questions: Question[] = [
     answers: ['Dummy Answer A', 'Dummy Answer B', 'Dummy Answer C'],
     correctIndex: 1,
     didYouKnow: 'Dummy Did You Know 1. Extra text to test the length of the textbox. This is a long text',
+    buLogo: Assets.Logos.BU.ActiveParents,
   },
   {
     genre: 'Dummy Genre 1',
@@ -26,6 +30,7 @@ const questions: Question[] = [
     answers: ['Answer A', 'Answer B', 'Answer C'],
     correctIndex: 1,
     didYouKnow: 'Dummy Did You Know 2. Extra text to test the length of the textbox. This is a long text',
+    buLogo: Assets.Logos.BU.ActiveHealth,
   },
   {
     genre: 'Dummy Genre 2',
@@ -34,6 +39,7 @@ const questions: Question[] = [
     answers: ['A', 'B', 'C'],
     correctIndex: 1,
     didYouKnow: 'Dummy Did You Know 3. Extra text to test the length of the textbox. This is a long text',
+    buLogo: Assets.Logos.BU.ActiveSg,
   },
   {
     genre: 'Dummy Genre 3',
@@ -42,6 +48,7 @@ const questions: Question[] = [
     answers: ['A1', 'B1', 'C1'],
     correctIndex: 1,
     didYouKnow: 'Dummy Did You Know 4. Extra text to test the length of the textbox. This is a long text',
+    buLogo: Assets.Logos.BU.ActiveSgAC,
   },
   {
     genre: 'Dummy Genre 1',
@@ -50,6 +57,7 @@ const questions: Question[] = [
     answers: ['X', 'Y', 'Z'],
     correctIndex: 1,
     didYouKnow: 'Dummy Did You Know 5. Extra text to test the length of the textbox. This is a long text',
+    buLogo: Assets.Logos.BU.ActiveHealth,
   },
 ];
 

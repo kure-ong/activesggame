@@ -125,6 +125,10 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(Assets.Buttons.RedA, 'assets/btn-red-a.png');
     this.load.image(Assets.Buttons.RedB, 'assets/btn-red-b.png');
     this.load.image(Assets.Buttons.RedC, 'assets/btn-red-c.png');
+    this.load.image(Assets.Logos.BU.ActiveParents, 'assets/bu-activeparents.png');
+    this.load.image(Assets.Logos.BU.ActiveHealth, 'assets/bu-activehealth.png');
+    this.load.image(Assets.Logos.BU.ActiveSg, 'assets/bu-activesg.png');
+    this.load.image(Assets.Logos.BU.ActiveSgAC, 'assets/bu-activesgac.png');
     this.load.image(Assets.UI.Modal, 'assets/modal-background.png');
     this.load.image(Assets.UI.TimerBar, 'assets/timerbar.png');
     this.load.image(Assets.UI.TimerBarInner, 'assets/timerbar-inner.png');
@@ -153,6 +157,11 @@ export default class GameScene extends Phaser.Scene {
     this.score = 0;
     this.currentFlagIndex = 0;
     this.createFlagIndex = 2;
+
+    this.avatarKey = '';
+    this.avatarRunGender='';
+    this.avatarStopGender='';
+    this.avatarState = 'idle';
   }
 
   create(data: GameSceneData) {
@@ -180,12 +189,14 @@ export default class GameScene extends Phaser.Scene {
     
     this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT - this.trackImgAspectHeight + 50, Assets.Backgrounds.FinishLine).setOrigin(0.5, 1);
 
-    this.anims.create({
-      key: 'wave',
-      frames: this.anims.generateFrameNumbers(Assets.Parents.Sprite, { start: 0, end: 1 }),
-      frameRate: 4, // Adjust to your preference (e.g. 4–8)
-      repeat: -1    // -1 = loop forever
-    });
+    if (!this.anims.exists('wave')) {
+      this.anims.create({
+        key: 'wave',
+        frames: this.anims.generateFrameNumbers(Assets.Parents.Sprite, { start: 0, end: 1 }),
+        frameRate: 4,
+        repeat: -1
+      });
+    }
 
     const parents = this.add.sprite(CANVAS_WIDTH / 2, CANVAS_HEIGHT - this.trackImgAspectHeight + 10, Assets.Parents.Sprite).setOrigin(0.5, 1);
     parents.setDisplaySize(200, parents.height * (200 / parents.width));
@@ -198,10 +209,9 @@ export default class GameScene extends Phaser.Scene {
     // shape.setDepth(10);
     // const mask = shape.createGeometryMask();
     // trackContainer.setMask(mask);
-    
     this.avatarRunGender = data.avatarKey === 'boy' ? Assets.Avatars.RunBoy : Assets.Avatars.RunGirl;
     this.avatarStopGender = data.avatarKey === 'boy' ? Assets.Avatars.StopBoy : Assets.Avatars.StopGirl;
-
+    
     this.anims.create({
       key: 'run_lane_0',
       frames: this.anims.generateFrameNumbers(this.avatarRunGender, { start: 0, end: 1 }),
@@ -650,7 +660,8 @@ export default class GameScene extends Phaser.Scene {
       color: '#9D1E65',
       wordWrap: { width: 800 },
     }).setOrigin(0.5);
-    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,topicText]).setDepth(999);
+    const buLogo = this.add.image(questionBoxBackground.width/2 - 20, 20, question.buLogo);
+    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,topicText,buLogo]).setDepth(999);
   }
 
   private displayQuestion(question: Question) {
@@ -666,6 +677,8 @@ export default class GameScene extends Phaser.Scene {
       color: '#9D1E65',
       wordWrap: { width: 800 },
     }).setOrigin(0.5);
+
+    const buLogo = this.add.image(questionBoxBackground.width/2 - 20, 20, question.buLogo);
 
     this.answerBtns = question.answers.map((answer, i) => {
       const key = i === this.selectedLane
@@ -691,7 +704,7 @@ export default class GameScene extends Phaser.Scene {
       return this.add.image(x, CANVAS_HEIGHT - this.trackImgAspectHeight,Assets.UI[key]).setDepth(5).setOrigin(0.5, 0).setVisible(i === this.selectedLane);
     });
 
-    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,questionText,...this.answerTexts,...this.answerBtns]);
+    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,questionText,...this.answerTexts,...this.answerBtns,buLogo]);
   
     this.createTimerBar(240,180,QUESTION_TIME_LIMIT);
   
@@ -748,11 +761,11 @@ export default class GameScene extends Phaser.Scene {
 
     if (isCorrect) {
       this.score += 5;
-      this.showModal();
+      this.showModal(isCorrect);
       // this.goToNextQuestion();
     } else {
       this.resetLaneOptions();
-      this.showModal();
+      this.showModal(isCorrect);
     }
   }
 
@@ -767,6 +780,7 @@ export default class GameScene extends Phaser.Scene {
         this.currentQuestion = this.questions[this.currentQuestionIndex];
         this.displayTopic(this.currentQuestion);
         this.time.delayedCall(1300,() => {
+          this.gameCountdownInterval.paused = false;
           this.displayQuestion(this.currentQuestion);
         })
       }
@@ -775,7 +789,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private showModal() {
+  private showModal(isCorrect: boolean) {
     this.inputLocked = true;
     this.gameCountdownInterval.paused = true;
     this.stopTimerBar();
@@ -814,7 +828,7 @@ export default class GameScene extends Phaser.Scene {
           this.fadeOutBlackOverlay();
           this.modal.destroy();
           this.inputLocked = false;
-          this.gameCountdownInterval.paused = false;
+          // this.gameCountdownInterval.paused = false;
           // this.timerBarContainer?.destroy();
           this.goToNextQuestion();
         },
@@ -828,6 +842,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.gameCountdownInterval) {
       this.gameCountdownInterval.remove(false);
     }
+
+    for (let i = 0; i < 3; i++) {
+      this.anims.remove(`run_lane_${i}`);
+    }
+
     console.log('Final score:', this.score);
 
     console.log('Game Ended')

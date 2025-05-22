@@ -2,7 +2,6 @@ import { forwardRef, useEffect, useRef } from 'react';
 import StartGame from './game/main';
 import { EventBus } from './game/EventBus';
 import { loadFont } from './game/utils/loadFont';
-import { globalTextStyle } from './game/constants/textStyle'; 
 import './game/scenes/StartMenuScene'; // just to watch for file changes to hot reload, can remove this after dev
 
 export interface IRefPhaserGame {
