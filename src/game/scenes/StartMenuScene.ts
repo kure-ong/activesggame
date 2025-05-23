@@ -11,11 +11,7 @@ export default class StartMenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
-    this.load.image(Assets.Logos.ActiveParents, 'assets/active-parents-logo.png');
-    this.load.image(Assets.UI.GameTitle, 'assets/game-title.png');
-    this.load.image(Assets.Buttons.LetsPlay, 'assets/lets-play-button.png');
-    this.load.image(Assets.Backgrounds.IntroChar, 'assets/introchar.png');
+
   }
 
   create() {
@@ -37,14 +33,13 @@ export default class StartMenuScene extends Phaser.Scene {
       .image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 1.9, Assets.Buttons.LetsPlay)
       .setInteractive();
 
-    playButton.on('pointerdown', () => {
+    const nextScene = () => {
       playSound(this, 'buttonPress');
       this.scene.start('AvatarSelectionScene');
-    });
+    };
+    
+    playButton.on('pointerdown', nextScene);
+    this.confirmKey.on('down', nextScene);
 
-    this.confirmKey.on('down', () => {
-      playSound(this, 'buttonPress');
-      this.scene.start('AvatarSelectionScene')
-    });
   }
 }

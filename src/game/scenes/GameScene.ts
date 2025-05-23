@@ -55,7 +55,7 @@ export default class GameScene extends Phaser.Scene {
   private trackImgAspectHeight!: number;
   private laneHighlights: Phaser.GameObjects.Image[] = [];
   private laneOptions!: Phaser.GameObjects.Image;
-  private laneStep = 50; // pixels to move per press
+  private laneStep = 30; // pixels to move per press
   private laneTargetY = 600; // match this.avatar.y
   private laneReachedTarget = false;
   private isLaneAnimating = false;
@@ -167,19 +167,17 @@ export default class GameScene extends Phaser.Scene {
   create(data: GameSceneData) {
     this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
     const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky).setOrigin(0.5, 0);
-    const skyBgAspectHeight = skyBg.height * (CANVAS_WIDTH / skyBg.width)
-    skyBg.setDisplaySize(CANVAS_WIDTH, skyBgAspectHeight);
+    aspectResize(skyBg,CANVAS_WIDTH);
     
     const cloudsImg = this.add.image(CANVAS_WIDTH / 2, -100, Assets.Backgrounds.Clouds).setOrigin(0.5, 0);
-    const cloudsImgAspectHeight = cloudsImg.height * ((CANVAS_WIDTH * 2) / cloudsImg.width)
-    cloudsImg.setDisplaySize(CANVAS_WIDTH * 2, cloudsImgAspectHeight);
-    
-    const trackImg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.Track).setOrigin(0.5, 0);
+    aspectResize(cloudsImg,CANVAS_WIDTH * 2.4);
+
+    const trackImg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Racetrack).setOrigin(0.5, 0);
     this.trackImgAspectHeight = trackImg.height * (CANVAS_WIDTH / trackImg.width)
     trackImg.setDisplaySize(CANVAS_WIDTH, this.trackImgAspectHeight);
 
     this.laneOptions = this.add.image(CANVAS_WIDTH / 2, 0, Assets.UI.LaneOptions).setOrigin(0.5, 0);
-    this.laneOptions.setDisplaySize(640, this.laneOptions.height * (640 / this.laneOptions.width));
+    aspectResize(this.laneOptions,580)
     this.originalLaneWidth = this.laneOptions.displayWidth;
     this.originalLaneHeight = this.laneOptions.displayHeight;
     this.laneOptions.setY(0);
@@ -199,7 +197,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     const parents = this.add.sprite(CANVAS_WIDTH / 2, CANVAS_HEIGHT - this.trackImgAspectHeight + 10, Assets.Parents.Sprite).setOrigin(0.5, 1);
-    parents.setDisplaySize(200, parents.height * (200 / parents.width));
+    aspectResize(parents,200);
 
     parents.play('wave');
 
@@ -477,7 +475,7 @@ export default class GameScene extends Phaser.Scene {
     const currentY = this.laneOptions.y;
     const nextY = currentY + this.laneStep;
     const finalY = this.laneTargetY;
-    const maxScale = 1.9;
+    const maxScale = 1.95;
     const overshootScale = 2.5;
     
     const progress = Phaser.Math.Clamp(nextY / finalY, 0, 1);

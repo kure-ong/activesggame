@@ -32,7 +32,7 @@ export default class GameAnalysisScene extends Phaser.Scene {
 
     this.confirmKey = this.input.keyboard!.addKey(INPUT_KEYS.CONFIRM);
 
-    this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.Game);
+    this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.EndGame);
 
     confettiTweens = startConfettiSequence(this, Assets.Animations.Confetti, CANVAS_WIDTH, CANVAS_HEIGHT);
 

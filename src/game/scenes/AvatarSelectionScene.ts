@@ -14,13 +14,7 @@ export default class AvatarSelectionScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
-    this.load.image(Assets.UI.Header, 'assets/choose-avatar-header.png');
-    this.load.image(Assets.Avatars.Boy, 'assets/avatar-boy.png');
-    this.load.image(Assets.Avatars.Girl, 'assets/avatar-girl.png');
-    this.load.image(Assets.Avatars.BoyGrey, 'assets/avatar-boy-grey.png');
-    this.load.image(Assets.Avatars.GirlGrey, 'assets/avatar-girl-grey.png');
-    this.load.image(Assets.Buttons.Start, 'assets/start-button.png');
+   
   }
 
   create() {    
@@ -72,22 +66,22 @@ export default class AvatarSelectionScene extends Phaser.Scene {
       updateAvatarSelection();
     };
 
-    // Helper to start game if avatar selected
-    const tryStartGame = () => {
+    // Helper to go next scene if avatar selected
+    const nextScene = () => {
       playSound(this, 'buttonPress');
       if (this.selectedAvatar) {
-        this.scene.start('GameScene', { avatarKey: this.selectedAvatar });
+        this.scene.start('InstructionScene', { avatarKey: this.selectedAvatar });
       }
     };
 
     // Keyboard input
     this.leftKey.on('down', () => selectAvatar(0));
     this.rightKey.on('down', () => selectAvatar(1));
-    this.confirmKey.on('down', tryStartGame);
+    this.confirmKey.on('down', nextScene);
 
     // Pointer input
     boy.on('pointerdown', () => selectAvatar(0));
     girl.on('pointerdown', () => selectAvatar(1));
-    start.on('pointerdown', tryStartGame);
+    start.on('pointerdown', nextScene);
   }
 }

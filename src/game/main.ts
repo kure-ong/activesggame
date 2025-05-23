@@ -6,6 +6,7 @@ import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import StartMenuScene from './scenes/StartMenuScene';
 import AvatarSelectionScene from './scenes/AvatarSelectionScene';
+import InstructionScene from './scenes/InstructionScene';
 import GameScene from './scenes/GameScene';
 import GameFinishScene from './scenes/GameFinishScene';
 import GameAnalysisScene from './scenes/GameAnalysisScene';
@@ -28,6 +29,7 @@ const config: Phaser.Types.Core.GameConfig = {
         //
         StartMenuScene,
         AvatarSelectionScene,
+        InstructionScene,
         GameScene,
         GameFinishScene,
         GameAnalysisScene,

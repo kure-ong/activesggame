@@ -1,7 +1,7 @@
 export const Assets = {
   Backgrounds: {
     Game: 'gameBackground',
-    Play: 'playBackground',
+    EndGame: 'endGameBackground',
     Finish: 'finishBackground',
     Sky: 'sky',
     Clouds: 'clouds',
@@ -49,9 +49,9 @@ export const Assets = {
     GameTitle: 'gameTitle',
     Modal: 'modalBackground',
     QuestionBox: 'questionBoxBackground',
-    Track: 'racetrack',
     LaneOptions: 'laneOptions',
     Header: 'chooseAvatarHeader',
+    Instructions: 'instructions',
     TimerBar: 'timerBar',
     TimerBarInner: 'timerBarInner',
     TimerBarIcon: 'timerBarIcon',

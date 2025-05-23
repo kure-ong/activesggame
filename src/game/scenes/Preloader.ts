@@ -38,9 +38,17 @@ export class Preloader extends Scene
         this.load.audio('selection', 'assets/sfx/selection.mp3');
         this.load.audio('timesUp', 'assets/sfx/timesup.mp3');
         
-        this.load.image(Assets.Backgrounds.Game, 'assets/game-background.png');
+        this.load.image(Assets.Backgrounds.Game, 'assets/background-start.png');
         this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
         this.load.image(Assets.Backgrounds.Clouds, 'assets/clouds.png');
+        this.load.image(Assets.Backgrounds.EndGame, 'assets/background-end.png');
+
+        this.load.image(Assets.Logos.ActiveParents, 'assets/active-parents-logo.png');
+        this.load.image(Assets.UI.GameTitle, 'assets/game-title.png');
+        this.load.image(Assets.Buttons.LetsPlay, 'assets/lets-play-button.png');
+        this.load.image(Assets.Backgrounds.IntroChar, 'assets/introchar.png');
+        this.load.image(Assets.UI.Instructions, 'assets/instructions.png');
+
         this.load.image(Assets.Backgrounds.Racetrack, 'assets/racetrack.png');
         this.load.image(Assets.Backgrounds.FinishLine, 'assets/finish-line.png');
         this.load.spritesheet(Assets.Parents.Sprite, 'assets/parents-sprite.png', {
@@ -48,6 +56,15 @@ export class Preloader extends Scene
             frameHeight: 446
         });
         this.load.image(Assets.Logos.ActiveParentsWhite, 'assets/active-parents-logo-white.png');
+
+        this.load.image(Assets.UI.Header, 'assets/choose-avatar-header.png');
+        this.load.image(Assets.Avatars.Boy, 'assets/avatar-boy.png');
+        this.load.image(Assets.Avatars.Girl, 'assets/avatar-girl.png');
+        this.load.image(Assets.Avatars.BoyGrey, 'assets/avatar-boy-grey.png');
+        this.load.image(Assets.Avatars.GirlGrey, 'assets/avatar-girl-grey.png');
+
+    
+        this.load.image(Assets.Buttons.Start, 'assets/start-button.png');
     }
 
     create ()
