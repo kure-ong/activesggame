@@ -48,6 +48,7 @@ export const Assets = {
   UI: {
     GameTitle: 'gameTitle',
     Modal: 'modalBackground',
+    ModalCorrect: 'modalBackgroundCorrect',
     QuestionBox: 'questionBoxBackground',
     LaneOptions: 'laneOptions',
     Header: 'chooseAvatarHeader',

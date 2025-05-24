@@ -95,12 +95,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');
-    // this.load.image(Assets.Backgrounds.Clouds, 'assets/clouds.png');
-    // this.load.image(Assets.Backgrounds.Racetrack, 'assets/racetrack.png');
-    // this.load.image(Assets.Backgrounds.FinishLine, 'assets/finish-line.png');
     this.load.image(Assets.UI.LaneOptions, 'assets/lane-options.png')
-    // this.load.image(Assets.Avatars.RunBoy, 'assets/run-boy.png');
     this.load.spritesheet(Assets.Avatars.RunBoy, 'assets/avatar-running-sprite-boy.png', {
       frameWidth: 300,
       frameHeight: 550
@@ -129,7 +124,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image(Assets.Logos.BU.ActiveHealth, 'assets/bu-activehealth.png');
     this.load.image(Assets.Logos.BU.ActiveSg, 'assets/bu-activesg.png');
     this.load.image(Assets.Logos.BU.ActiveSgAC, 'assets/bu-activesgac.png');
-    this.load.image(Assets.UI.Modal, 'assets/modal-background.png');
+    this.load.image(Assets.UI.Modal, 'assets/modal-background-wrong.png');
+    this.load.image(Assets.UI.ModalCorrect, 'assets/modal-background-correct.png');
     this.load.image(Assets.UI.TimerBar, 'assets/timerbar.png');
     this.load.image(Assets.UI.TimerBarInner, 'assets/timerbar-inner.png');
     this.load.image(Assets.UI.TimerBarIcon, 'assets/timerbar-icon.png');
@@ -656,7 +652,7 @@ export default class GameScene extends Phaser.Scene {
       ...globalTextStyle,
       fontSize: '42px',
       color: '#9D1E65',
-      wordWrap: { width: 800 },
+      wordWrap: { width: 750 },
     }).setOrigin(0.5);
     const buLogo = this.add.image(questionBoxBackground.width/2 - 20, 20, question.buLogo);
     this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,topicText,buLogo]).setDepth(999);
@@ -669,11 +665,11 @@ export default class GameScene extends Phaser.Scene {
   
     const questionBoxBackground = this.add.image(0, 0, Assets.UI.QuestionBox).setOrigin(0.5, 0);
 
-    const questionText = this.add.text(0, 100, question.question, {
+    const questionText = this.add.text(0, 120, question.question, {
       ...globalTextStyle,
       fontSize: '32px',
       color: '#9D1E65',
-      wordWrap: { width: 800 },
+      wordWrap: { width: 700 },
     }).setOrigin(0.5);
 
     const buLogo = this.add.image(questionBoxBackground.width/2 - 20, 20, question.buLogo);
@@ -793,13 +789,20 @@ export default class GameScene extends Phaser.Scene {
     this.stopTimerBar();
     this.setBlackOverlay();
     const bg = this.add.image(0,0, Assets.UI.Modal).setOrigin(0.5);
+    if (isCorrect) {
+      playSound(this, 'answerCorrect');
+      bg.setTexture(Assets.UI.ModalCorrect);
+    } else {
+      playSound(this, 'answerWrong');
+      bg.setTexture(Assets.UI.Modal);
+    }
     const text = this.add
-      .text(-bg.width / 2 + 40, 40, this.currentQuestion.didYouKnow, {
+      .text(-350, 0, isCorrect? this.currentQuestion.didYouKnowCorrect : this.currentQuestion.didYouKnowWrong, {
         ...globalTextStyle,
         fontSize: '32px',
         color: '#000',
         align: 'left',
-        wordWrap: { width: bg.width - 300, useAdvancedWrap: true },
+        wordWrap: { width: bg.width - 460, useAdvancedWrap: true },
       })
       .setOrigin(0, 0.5);
 

@@ -37,6 +37,8 @@ export class Preloader extends Scene
         this.load.audio('gameComplete', 'assets/sfx/game-complete.mp3');
         this.load.audio('selection', 'assets/sfx/selection.mp3');
         this.load.audio('timesUp', 'assets/sfx/timesup.mp3');
+        this.load.audio('answerCorrect', 'assets/sfx/answer-correct.mp3');
+        this.load.audio('answerWrong', 'assets/sfx/answer-wrong.mp3');
         
         this.load.image(Assets.Backgrounds.Game, 'assets/background-start.png');
         this.load.image(Assets.Backgrounds.Sky, 'assets/sky.png');

@@ -9,55 +9,61 @@ export interface Question {
   question: string;
   answers: string[];
   correctIndex: number;
-  didYouKnow: string;
+  didYouKnowCorrect: string;
+  didYouKnowWrong: string;
   buLogo: string;
 }
 
 const questions: Question[] = [
   {
     genre: 'Dummy Genre 1',
-    topic: 'Dummy Topic 1',
-    question: 'Dummy Question 1',
+    topic: 'Active Parents strengthens family bonds through sport.',
+    question: 'We enable and empower parents to…',
     answers: ['Dummy Answer A', 'Dummy Answer B', 'Dummy Answer C'],
     correctIndex: 1,
-    didYouKnow: 'Dummy Did You Know 1. Extra text to test the length of the textbox. This is a long text',
+    didYouKnowCorrect: 'Well done! While fitness matters, we focus on helping parents bond and grow with their kids through shared sport experiences.',
+    didYouKnowWrong: 'Not quite. Correct answer is A.\nWhile fitness matters, we focus on helping parents bond and grow with their kids through shared sport experiences.',
     buLogo: Assets.Logos.BU.ActiveParents,
   },
   {
     genre: 'Dummy Genre 1',
-    topic: 'Dummy Topic 2',
-    question: 'Dummy Question 2',
+    topic: 'Families that play together, grow together.',
+    question: 'How can you be an Active Parent?',
+    answers: ['X', 'Y', 'Z'],
+    correctIndex: 1,
+    didYouKnowCorrect: 'That’s right! Being an Active Parent means both leading by example AND engaging in your child’s sporting journey.',
+    didYouKnowWrong: 'Nice try. Correct answer is C.\nThat’s right! Being an Active Parent means both leading by example AND engaging in your child’s sporting journey.',
+    buLogo: Assets.Logos.BU.ActiveParents,
+  },
+  {
+    genre: 'Dummy Genre 1',
+    topic: 'Active Health champions balanced living.',
+    question: 'Which of the following is NOT what Active Health advocates for?',
     answers: ['Answer A', 'Answer B', 'Answer C'],
     correctIndex: 1,
-    didYouKnow: 'Dummy Did You Know 2. Extra text to test the length of the textbox. This is a long text',
+    didYouKnowCorrect: 'Great job! Active Health focuses on building sustainable habits through movement, nutrition, and rest — not retail therapy!',
+    didYouKnowWrong: 'Good try. Correct answer is C.\nActive Health focuses on building sustainable habits through movement, nutrition, and rest — not retail therapy!',
     buLogo: Assets.Logos.BU.ActiveHealth,
   },
   {
     genre: 'Dummy Genre 2',
-    topic: 'Dummy Topic 3',
-    question: 'Question 3',
+    topic: 'Sport teaches life values.',
+    question: 'What are the core values of our ActiveSG Academies & Clubs',
     answers: ['A', 'B', 'C'],
     correctIndex: 1,
-    didYouKnow: 'Dummy Did You Know 3. Extra text to test the length of the textbox. This is a long text',
-    buLogo: Assets.Logos.BU.ActiveSg,
-  },
-  {
-    genre: 'Dummy Genre 3',
-    topic: 'Dummy Topic 4',
-    question: 'Question 4',
-    answers: ['A1', 'B1', 'C1'],
-    correctIndex: 1,
-    didYouKnow: 'Dummy Did You Know 4. Extra text to test the length of the textbox. This is a long text',
+    didYouKnowCorrect: 'Bravo! Honour, Resilience, and Teamwork are ActiveSG’s pillars — shaping athletes who respect the game, overcome obstacles, and thrive together.',
+    didYouKnowWrong: 'Good try. Correct Answer is A.\nHonour, Resilience, and Teamwork are ActiveSG’s pillars — shaping athletes who respect the game, overcome obstacles, and thrive together.',
     buLogo: Assets.Logos.BU.ActiveSgAC,
   },
   {
-    genre: 'Dummy Genre 1',
-    topic: 'Dummy Topic 5',
-    question: 'Question 5',
-    answers: ['X', 'Y', 'Z'],
+    genre: 'Dummy Genre 3',
+    topic: 'ActiveSG makes sport accessible to everyone!',
+    question: 'How much is this year’s SG60 ActiveSG Credit Top-Up?',
+    answers: ['A1', 'B1', 'C1'],
     correctIndex: 1,
-    didYouKnow: 'Dummy Did You Know 5. Extra text to test the length of the textbox. This is a long text',
-    buLogo: Assets.Logos.BU.ActiveHealth,
+    didYouKnowCorrect: 'That’s right! New members of all ages receive $100 credits to book ActiveSG facilities.',
+    didYouKnowWrong: 'Good try. Correct Answer is B.\nGood job! New members of all ages receive $100 credits to book ActiveSG facilities.',
+    buLogo: Assets.Logos.BU.ActiveSg,
   },
 ];
 
