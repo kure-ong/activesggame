@@ -595,7 +595,10 @@ export default class GameScene extends Phaser.Scene {
           fontSize: '48px',
           ...globalTextStyle
         });
-        if (this.gameCountdownValue <= 0) this.endGame();
+        if (this.gameCountdownValue <= 0) {
+          this.displayTimesUp();
+          this.time.delayedCall(2000, () => this.endGame());
+        }
       },
     });
   }
@@ -639,6 +642,25 @@ export default class GameScene extends Phaser.Scene {
         }
       },
     });
+  }
+
+  private displayTimesUp() {
+    this.questionBox?.destroy();
+    this.timerBarContainer?.destroy();
+    this.stopTimerBar();
+    this.inputLocked = true;
+    this.gameCountdownInterval.paused = true;
+
+    playSound(this,'timesUp');
+    
+    const questionBoxBackground = this.add.image(0, 0, Assets.UI.QuestionBox).setOrigin(0.5, 0);
+    const timesUpText = this.add.text(0, questionBoxBackground.height / 2, 'TIME’S UP!\nOH NO!', {
+      ...globalTextStyle,
+      fontSize: '75px',
+      color: '#9D1E65',
+      wordWrap: { width: 750 },
+    }).setOrigin(0.5);
+    this.questionBox = this.add.container(CANVAS_WIDTH / 2, 160, [questionBoxBackground,timesUpText]).setDepth(999);
   }
 
   private displayTopic(question: Question) {
@@ -686,6 +708,8 @@ export default class GameScene extends Phaser.Scene {
       this.add.text(-questionBoxBackground.width / 2 + 162, 200 + i * 70, answer, {
         ...globalTextStyle,
         fontSize: '28px',
+        align: 'left',
+        wordWrap: { width: 600 },
         color: i === this.selectedLane ? '#1DABE3':'#9D1E65',
       }).setOrigin(0, 0.5)
     );
