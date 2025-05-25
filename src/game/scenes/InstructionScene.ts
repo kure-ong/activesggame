@@ -32,7 +32,7 @@ export default class InstructionScene extends Phaser.Scene {
     this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.UI.Instructions);
 
     const skipButton = this.add
-      .image(CANVAS_WIDTH / 2, CANVAS_HEIGHT * 0.9, Assets.Buttons.Start)
+      .image(CANVAS_WIDTH / 2, CANVAS_HEIGHT * 0.9, Assets.Buttons.Skip)
       .setDepth(2)
       .setInteractive();
 

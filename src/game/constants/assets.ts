@@ -22,6 +22,8 @@ export const Assets = {
   Buttons: {
     LetsPlay: 'letsPlayButton',
     Start: 'startButton',
+    Skip: 'skipButton',
+    Next: 'nextButton',
     Done: 'doneButton',
     BlueA: 'blueA',
     BlueB: 'blueB',

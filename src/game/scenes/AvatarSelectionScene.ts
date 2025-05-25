@@ -34,8 +34,8 @@ export default class AvatarSelectionScene extends Phaser.Scene {
       .image(CANVAS_WIDTH / 2 + 230, 800, Assets.Avatars.GirlGrey)
       .setInteractive();
 
-    const start = this.add
-      .image(CANVAS_WIDTH / 2, 1200, Assets.Buttons.Start)
+    const next = this.add
+      .image(CANVAS_WIDTH / 2, 1200, Assets.Buttons.Next)
       .setAlpha(0.5)
       .setInteractive();
 
@@ -54,7 +54,7 @@ export default class AvatarSelectionScene extends Phaser.Scene {
         boy.setTexture(Assets.Avatars.BoyGrey);
         girl.setTexture(Assets.Avatars.Girl);
       }
-      start.setAlpha(1);
+      next.setAlpha(1);
     };
 
     // Initial selection
@@ -82,6 +82,6 @@ export default class AvatarSelectionScene extends Phaser.Scene {
     // Pointer input
     boy.on('pointerdown', () => selectAvatar(0));
     girl.on('pointerdown', () => selectAvatar(1));
-    start.on('pointerdown', nextScene);
+    next.on('pointerdown', nextScene);
   }
 }
