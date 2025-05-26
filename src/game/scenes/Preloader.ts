@@ -69,6 +69,8 @@ export class Preloader extends Scene
 
     
         this.load.image(Assets.Buttons.Start, 'assets/start-button.png');
+        this.load.image(Assets.Buttons.Skip, 'assets/skip-button.png');
+        this.load.image(Assets.Buttons.Next, 'assets/next-button.png');
     }
 
     create ()
