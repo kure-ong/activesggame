@@ -10,7 +10,7 @@ export const GO_TIMER_DURATION = 3;
 // export const GO_TIMER_DURATION = 1;
 export const GAME_DURATION = 60;
 // export const GAME_DURATION = 5;
-export const MODAL_DURATION = 4000; //1000 = 1 sec
+export const MODAL_DURATION = 5100; //1000 = 1 sec
 
 // Key bindings (can swap values easily later)
 export const INPUT_KEYS = {

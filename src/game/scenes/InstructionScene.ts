@@ -45,7 +45,7 @@ export default class InstructionScene extends Phaser.Scene {
     };
     skipButton.on('pointerdown', nextScene);
     this.confirmKey.on('down', nextScene);
-    this.time.delayedCall(7000, nextScene);
+    // this.time.delayedCall(7000, nextScene);
 
   }
 }
