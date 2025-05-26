@@ -3,8 +3,7 @@ import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, INPUT_KEYS } from '../constants/gameConfig';
 import { playSound } from '../utils/soundHelper';
 import { aspectResize } from '../utils/displaySizeUtils';
-import next from 'next';
-
+import { addResetButton } from '../utils/uiHelpers';
 interface GameSceneData {
   avatarKey: string;
 }
@@ -16,11 +15,10 @@ export default class InstructionScene extends Phaser.Scene {
     super('InstructionScene');
   }
 
-  preload() {
-  }
-
   create(data: GameSceneData) {
     this.confirmKey = this.input.keyboard!.addKey(INPUT_KEYS.CONFIRM);
+
+    addResetButton(this);
     
     this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
 

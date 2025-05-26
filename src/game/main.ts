@@ -19,7 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 1080,
     height: 1920,
     parent: 'game-container',
-    backgroundColor: '#672945',
+    backgroundColor: '#2D2D2D',
     scene: [
         // Boot,
         Preloader,

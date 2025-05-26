@@ -19,7 +19,9 @@ import {
   INPUT_KEYS,
 } from '../constants/gameConfig';
 import { globalTextStyle } from '../constants/textStyle';
-import { Asset } from 'next/font/google';
+// import { Asset } from 'next/font/google';
+import { logPlaythrough } from '../utils/logPlaythrough';
+import { addResetButton } from '../utils/uiHelpers';
 
 interface GameSceneData {
   avatarKey: string;
@@ -90,58 +92,10 @@ export default class GameScene extends Phaser.Scene {
 
   private blackOverlay!: Phaser.GameObjects.Graphics;
 
+  private sessionStart: number = 0;
+
   constructor() {
     super('GameScene');
-  }
-
-  preload() {
-    this.load.image(Assets.UI.LaneOptions, 'assets/lane-options.png')
-    this.load.spritesheet(Assets.Avatars.RunBoy, 'assets/avatar-running-sprite-boy.png', {
-      frameWidth: 300,
-      frameHeight: 550
-    })
-    this.load.spritesheet(Assets.Avatars.StopBoy, 'assets/avatar-stop-sprite-boy.png', {
-      frameWidth: 300,
-      frameHeight: 550
-    })
-    // this.load.image(Assets.Avatars.RunGirl, 'assets/run-girl.png');
-    this.load.spritesheet(Assets.Avatars.RunGirl, 'assets/avatar-running-sprite-girl.png', {
-      frameWidth: 300,
-      frameHeight: 550
-    })
-    this.load.spritesheet(Assets.Avatars.StopGirl, 'assets/avatar-stop-sprite-girl.png', {
-      frameWidth: 300,
-      frameHeight: 550
-    })
-    this.load.image(Assets.UI.QuestionBox, 'assets/questionbox-background.png');
-    this.load.image(Assets.Buttons.BlueA, 'assets/btn-blue-a.png');
-    this.load.image(Assets.Buttons.BlueB, 'assets/btn-blue-b.png');
-    this.load.image(Assets.Buttons.BlueC, 'assets/btn-blue-c.png');
-    this.load.image(Assets.Buttons.RedA, 'assets/btn-red-a.png');
-    this.load.image(Assets.Buttons.RedB, 'assets/btn-red-b.png');
-    this.load.image(Assets.Buttons.RedC, 'assets/btn-red-c.png');
-    this.load.image(Assets.Logos.BU.ActiveParents, 'assets/bu-activeparents.png');
-    this.load.image(Assets.Logos.BU.ActiveHealth, 'assets/bu-activehealth.png');
-    this.load.image(Assets.Logos.BU.ActiveSg, 'assets/bu-activesg.png');
-    this.load.image(Assets.Logos.BU.ActiveSgAC, 'assets/bu-activesgac.png');
-    this.load.image(Assets.UI.Modal, 'assets/modal-background-wrong.png');
-    this.load.image(Assets.UI.ModalCorrect, 'assets/modal-background-correct.png');
-    this.load.image(Assets.UI.TimerBar, 'assets/timerbar.png');
-    this.load.image(Assets.UI.TimerBarInner, 'assets/timerbar-inner.png');
-    this.load.image(Assets.UI.TimerBarIcon, 'assets/timerbar-icon.png');
-    this.load.image(Assets.Countdown.Count1, 'assets/gotimer-1.png');
-    this.load.image(Assets.Countdown.Count2, 'assets/gotimer-2.png');
-    this.load.image(Assets.Countdown.Count3, 'assets/gotimer-3.png');
-    this.load.image(Assets.Countdown.CountGo, 'assets/gotimer-go.png');
-    this.load.image(Assets.UI.FlagLeft, 'assets/flag-left.png');
-    this.load.image(Assets.UI.FlagRight, 'assets/flag-right.png');
-    this.load.image(Assets.UI.LaneHighlight0, 'assets/lanehighlight0.png');
-    this.load.image(Assets.UI.LaneHighlight1, 'assets/lanehighlight1.png');
-    this.load.image(Assets.UI.LaneHighlight2, 'assets/lanehighlight2.png');
-    // this.load.spritesheet(Assets.Parents.Sprite, 'assets/parents-sprite.png', {
-    //   frameWidth: 500,
-    //   frameHeight: 446
-    // });
   }
 
   init() {
@@ -161,6 +115,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(data: GameSceneData) {
+    this.sessionStart = Date.now();
+    addResetButton(this);
+
     this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
     const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky).setOrigin(0.5, 0);
     aspectResize(skyBg,CANVAS_WIDTH);
@@ -873,7 +830,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     console.log('Final score:', this.score);
-
+    logPlaythrough(this.score, this.sessionStart);
     console.log('Game Ended')
     this.scene.start('GameFinishScene',{ 
     avatarKey: this.avatarKey,

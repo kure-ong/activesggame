@@ -200,4 +200,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# playthrough data
+data/playthrough.csv
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,node

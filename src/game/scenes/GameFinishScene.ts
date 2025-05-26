@@ -4,6 +4,7 @@ import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/gameConfig';
 import { aspectResize } from '../utils/displaySizeUtils';
 import { playSound } from '../utils/soundHelper';
+import { addResetButton } from '../utils/uiHelpers';
 
 interface GameSceneData {
   avatarKey: string;
@@ -13,30 +14,14 @@ interface GameSceneData {
 let confettiTweens: Phaser.Tweens.Tween[] = [];
 
 export default class GameFinishScene extends Phaser.Scene {
-  private avatarAnim!: Phaser.GameObjects.Image;
-  private poppers: Phaser.GameObjects.Sprite[] = [];
-
   constructor() {
     super('GameFinishScene');
-  }
-
-  preload() {
-    this.load.image(Assets.Avatars.CelebrateBoy, 'assets/avatar-celebrate-boy.png');
-    this.load.image(Assets.Avatars.CelebrateGirl, 'assets/avatar-celebrate-girl.png');
-    this.load.image(Assets.Animations.RibbonLeft, 'assets/ribbon-left.png');
-    this.load.image(Assets.Animations.RibbonRight, 'assets/ribbon-right.png');
-    this.load.image(Assets.Animations.Confetti, 'assets/confetti.png')
-    // this.load.spritesheet(Assets.Animations.Confetti, 'assets/confetti.png', {
-    //   frameWidth: 128,
-    //   frameHeight: 128,
-    // });
   }
 
   create(data: GameSceneData) {
     console.log('Avatar:', data.avatarKey);
     console.log('Score:', data.score);
-    // const skyBg = this.add.image(CANVAS_WIDTH / 2, 0, Assets.Backgrounds.Sky);
-    // skyBg.setOrigin(skyBg.originX, 0);
+    addResetButton(this);
 
     this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
 
@@ -46,8 +31,7 @@ export default class GameFinishScene extends Phaser.Scene {
     const cloudsImg = this.add.image(CANVAS_WIDTH / 2, -250, Assets.Backgrounds.Clouds).setOrigin(0.5, 0);
     aspectResize(cloudsImg,CANVAS_WIDTH * 2.4);
 
-    const finishLine = this.add.image(CANVAS_WIDTH / 2, 350, Assets.Backgrounds.FinishLine).setOrigin(0.5, 0);
-    aspectResize(finishLine,CANVAS_WIDTH*1.3);
+    const finishLine = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.Backgrounds.FinishLineBig);
 
     const Racetrack = this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 1.8, Assets.Backgrounds.Racetrack);
     Racetrack.setOrigin(Racetrack.originX, 0);

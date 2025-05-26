@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Assets } from '../constants/assets';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, INPUT_KEYS } from '../constants/gameConfig';
 import { playSound } from '../utils/soundHelper';
+import { addResetButton } from '../utils/uiHelpers';
 
 export default class AvatarSelectionScene extends Phaser.Scene {
   private selectedAvatar: string | null = null;
@@ -13,14 +14,12 @@ export default class AvatarSelectionScene extends Phaser.Scene {
     super('AvatarSelectionScene');
   }
 
-  preload() {
-   
-  }
-
   create() {    
     this.leftKey = this.input.keyboard!.addKey(INPUT_KEYS.LEFT);
     this.rightKey = this.input.keyboard!.addKey(INPUT_KEYS.RIGHT);
     this.confirmKey = this.input.keyboard!.addKey(INPUT_KEYS.CONFIRM);
+
+    addResetButton(this);
     
     this.add.image(120,80, Assets.Logos.ActiveParentsWhite).setDepth(999);
 

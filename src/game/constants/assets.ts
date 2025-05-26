@@ -7,6 +7,7 @@ export const Assets = {
     Clouds: 'clouds',
     Racetrack: 'racetrack',
     FinishLine: 'finishLine',
+    FinishLineBig: 'finishLineBig',
     IntroChar: 'introChar',
   },
   Logos: {
