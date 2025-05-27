@@ -46,7 +46,7 @@ const questions: Question[] = [
     buLogo: Assets.Logos.BU.ActiveHealth,
   },
   {
-    genre: 'Dummy Genre 2',
+    genre: 'Dummy Genre 1',
     topic: 'Sport teaches life values.',
     question: 'What are the core values of our ActiveSG Academies & Clubs',
     answers: ['Honour, Resilience and Teamwork', 'Leadership, Responsibility and Perseverance', 'Confidence, Integrity, Sportsmanship'],
@@ -56,7 +56,7 @@ const questions: Question[] = [
     buLogo: Assets.Logos.BU.ActiveSgAC,
   },
   {
-    genre: 'Dummy Genre 3',
+    genre: 'Dummy Genre 1',
     topic: 'ActiveSG makes sport accessible to everyone!',
     question: 'How much is this year’s SG60 ActiveSG Credit Top-Up?',
     answers: ['$60', '$100', '$200'],
@@ -77,8 +77,9 @@ export function getRandomQuestions(): Question[] {
   };
 
   return [
-    ...pickRandom(genre1, 3),
-    ...pickRandom(genre2, 1),
-    ...pickRandom(genre3, 1),
+    ...pickRandom(genre1, 5), // 5 questions from genre 1
+    // ...pickRandom(genre1, 3),
+    // ...pickRandom(genre2, 1),
+    // ...pickRandom(genre3, 1),
   ];
 }
