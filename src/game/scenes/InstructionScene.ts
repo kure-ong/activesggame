@@ -29,8 +29,8 @@ export default class InstructionScene extends Phaser.Scene {
 
     this.add.image(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, Assets.UI.Instructions);
 
-    const skipButton = this.add
-      .image(CANVAS_WIDTH / 2, CANVAS_HEIGHT * 0.9, Assets.Buttons.Skip)
+    const button = this.add
+      .image(CANVAS_WIDTH / 2, CANVAS_HEIGHT * 0.9, Assets.Buttons.Start)
       .setDepth(2)
       .setInteractive();
 
@@ -41,7 +41,7 @@ export default class InstructionScene extends Phaser.Scene {
         this.scene.start('GameScene', { avatarKey: data.avatarKey });
       }
     };
-    skipButton.on('pointerdown', nextScene);
+    button.on('pointerdown', nextScene);
     this.confirmKey.on('down', nextScene);
     // this.time.delayedCall(7000, nextScene);
 
