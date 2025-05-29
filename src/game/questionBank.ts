@@ -59,10 +59,10 @@ const questions: Question[] = [
     genre: 'Dummy Genre 1',
     topic: 'ActiveSG makes sport accessible to everyone!',
     question: 'How much is this year’s SG60 ActiveSG Credit Top-Up?',
-    answers: ['$60', '$100', '$200'],
+    answers: ['$60', '$100', '$6'],
     correctIndex: 1,
-    didYouKnowCorrect: 'That’s right!\n\nNew members of all ages receive $100 credits to book ActiveSG facilities.',
-    didYouKnowWrong: 'Good try. Correct Answer is B.\n\nGood job! New members of all ages receive $100 credits to book ActiveSG facilities.',
+    didYouKnowCorrect: 'That’s right!\n\nFrom 2 June, all eligible ActiveSG members will receive $100 SG60 ActiveSG credits to book facilities and programmes.',
+    didYouKnowWrong: 'Good try. Correct Answer is B.\n\nFrom 2 June, all eligible ActiveSG members will receive $100 SG60 ActiveSG credits to book facilities and programmes.',
     buLogo: Assets.Logos.BU.ActiveSg,
   },
 ];
