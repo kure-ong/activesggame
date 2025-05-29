@@ -48,11 +48,11 @@ const questions: Question[] = [
   {
     genre: 'Dummy Genre 1',
     topic: 'Sport teaches life values.',
-    question: 'What are the core values of our ActiveSG Academies & Clubs',
+    question: 'What are the core values of our ActiveSG Academies & Clubs?',
     answers: ['Honour, Resilience and Teamwork', 'Leadership, Responsibility and Perseverance', 'Confidence, Integrity, Sportsmanship'],
     correctIndex: 0,
     didYouKnowCorrect: 'Bravo!\n\nHonour, Resilience, and Teamwork are ActiveSG’s pillars — shaping athletes who respect the game, overcome obstacles, and thrive together.',
-    didYouKnowWrong: 'Good try. Correct Answer is A.\n\nHonour, Resilience, and Teamwork are ActiveSG’s pillars — shaping athletes who respect the game, overcome obstacles, and thrive together.',
+    didYouKnowWrong: 'Good try. Correct Answer is A.\n\nHonour, Resilience, and Teamwork are ActiveSG Academies & Clubs pillars — shaping athletes who respect the game, overcome obstacles, and thrive together.',
     buLogo: Assets.Logos.BU.ActiveSgAC,
   },
   {
